@@ -52,7 +52,15 @@
                     <ul class="dropdown-menu" aria-labelledby="read-in-browser">
                     {% for format in entry.data %}
                       {%if format.format|lower == 'epub' or format.format|lower == 'txt' or format.format|lower == 'pdf' or format.format|lower == 'cbr' or format.format|lower == 'cbt' or format.format|lower == 'cbz' %}
-                      <li><a target="_blank" href="{{ url_for('read_book', book_id=entry.id, book_format=format.format|lower) }}">{{format.format}}</a></li>
+                        {% if format.format|lower == 'pdf' %}
+                            <li>
+                                <a data-href="{{ url_for('view_book', book_id=entry.id) }}" href="{{ url_for('read_book', book_id=entry.id, book_format=format.format|lower) }}" data-toggle="modal" data-target="#bookViewModal" data-remote="false">{{format.format}}</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a target="_blank" href="{{ url_for('read_book', book_id=entry.id, book_format=format.format|lower) }}">{{format.format}}</a>
+                            </li>
+                        {% endif %}
                       {% endif %}
                     {%endfor%}
                     </ul>
@@ -160,16 +168,16 @@
       {% endif %}
       {% if not g.user.is_anonymous %}
 
-        <div class="custom_columns">
-          <p>
-          <form id="have_read_form" action="{{ url_for('toggle_read', book_id=entry.id)}}" method="POST">
-            <label class="block-label">
-              <input id="have_read_cb" type="checkbox" {% if have_read %}checked{% endif %} >
-              <span>{{_('Read')}}</span>
-            </label>
-          </form>
-          </p>
-        </div>
+{#        <div class="custom_columns">#}
+{#          <p>#}
+{#          <form id="have_read_form" action="{{ url_for('toggle_read', book_id=entry.id)}}" method="POST">#}
+{#            <label class="block-label">#}
+{#              <input id="have_read_cb" type="checkbox" {% if have_read %}checked{% endif %} >#}
+{#              <span>{{_('Read')}}</span>#}
+{#            </label>#}
+{#          </form>#}
+{#          </p>#}
+{#        </div>#}
       {% endif %}
 
 

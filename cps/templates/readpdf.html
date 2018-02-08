@@ -31,6 +31,8 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/viewer.css') }}">
     <!--<link rel="stylesheet" href="viewer.css">-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/libs/viewer.css') }}">
+    {% if (g.user.role_download() != true) %} <style> #print {display:none !important; }</style> {% endif %}
 
     <script src="{{ url_for('static', filename='js/libs/compatibility.js') }}"></script>
     <!--<script src="compatibility.js"></script>-->
@@ -46,6 +48,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 <!--<script src="debugger.js"></script>-->
 <script src="{{ url_for('static', filename='js/libs/pdf.js') }}"></script>
 <!--<script src="pdf.js"></script>-->
+<script src="{{ url_for('static', filename='custom/js/shortcut.js') }}"></script>
 
 <script type="text/javascript">
   var DEFAULT_URL = "{{ url_for('serve_book', book_id=pdffile,book_format='pdf') }}";
@@ -347,6 +350,27 @@ See https://github.com/adobe-type-tools/cmap-resources
               <button id="documentPropertiesClose" class="overlayButton"><span data-l10n-id="document_properties_close">Close</span></button>
             </div>
           </div>
+        </div>
+        <div id="printServiceOverlay" class="container hidden">
+            <div class="dialog"> <div class="row"> <span data-l10n-id="print_progress_message">Preparing document for printing…</span> </div>
+                <div class="row">
+                    <progress value="0" max="100"></progress>
+                    <span data-l10n-id="print_progress_percent" data-l10n-args='{ "progress": 0 }' class="relative-progress">0%</span>
+                </div> <div class="buttonRow">
+                    <button id="printCancel" class="overlayButton"><span data-l10n-id="print_progress_close">Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="chromeFileAccessOverlay" class="container hidden">
+            <div class="dialog">
+                <div class="row">
+                    <p id="chrome-pdfjs-logo-bg" style="display: block; padding-left: 60px; min-height: 48px; background-size: 48px; background-repeat: no-repeat; font-size: 14px; line-height: 1.8em; word-break: break-all;"> Click on "<span id="chrome-file-access-label">Allow access to file URLs</span>"at
+                        <a id="chrome-link-to-extensions-page">chrome://extensions</a>
+                        <br> to view <span id="chrome-url-of-local-file">this PDF file.</span>
+                    </p>
+                </div>
+            </div>
         </div>
       </div>  <!-- overlayContainer -->
 

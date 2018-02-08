@@ -1230,6 +1230,7 @@ def author(book_id, page):
         other_books = get_unique_other_books(entries.all(), author_info.books)
 
     return render_title_template('author.html', entries=entries, pagination=pagination,
+                                 searchparams=[{'key': 'authors', 'value': book_id}],
                                  title=name, author=author_info, other_books=other_books)
 
 
@@ -1273,6 +1274,7 @@ def series(book_id, page):
     name = db.session.query(db.Series).filter(db.Series.id == book_id).first().name
     if entries:
         return render_title_template('index.html', random=random, pagination=pagination, entries=entries,
+                                     searchparams=[{'key': 'series', 'value': book_id}],
                                      title=_(u"Series: %(serie)s", serie=name))
     else:
         flash(_(u"Error opening eBook. File does not exist or file is not accessible:"), category="error")
@@ -1347,6 +1349,7 @@ def category(book_id, page):
 
     name = db.session.query(db.Tags).filter(db.Tags.id == book_id).first().name
     return render_title_template('index.html', random=random, entries=entries, pagination=pagination,
+                                 searchparams=[{'key': 'tags', 'value': book_id}],
                                  title=_(u"Category: %(name)s", name=name))
 
 
@@ -1363,6 +1366,29 @@ def toggle_read(book_id):
         readBook.book_id = book_id
         readBook.is_read = True
         book = readBook
+    ub.session.merge(book)
+    ub.session.commit()
+    return ""
+
+
+@app.route("/ajax/viewbook/<int:book_id>", methods=['POST'])
+@login_required
+def view_book(book_id):
+    book = ub.session.query(ub.ViewBook).filter(ub.and_(ub.ViewBook.user_id == int(current_user.id),
+                                                                   ub.ViewBook.book_id == book_id,
+                                                                   ub.ViewBook.date_at == datetime.datetime.now().date()
+                                                                   #, ub.ViewBook.time_at == datetime.datetime.now().time()
+                                                                )).first()
+
+    if book:
+        book.time_at = datetime.datetime.now().time()
+    else:
+        viewBook = ub.ViewBook()
+        viewBook.user_id = int(current_user.id)
+        viewBook.book_id = book_id
+        viewBook.date_at = datetime.datetime.now().date()
+        viewBook.time_at = datetime.datetime.now().time()
+        book = viewBook
     ub.session.merge(book)
     ub.session.commit()
     return ""
@@ -1474,6 +1500,120 @@ def stats():
 
     return render_title_template('stats.html', bookcounter=counter, authorcounter=authors, versions=versions,
                                  categorycounter=categorys, seriecounter=series, title=_(u"Statistics"))
+
+
+@app.route("/statistics")
+@login_required
+def statistics():
+    counter = len(db.session.query(db.Books).all())
+    authors = len(db.session.query(db.Authors).all())
+    categorys = len(db.session.query(db.Tags).all())
+    series = len(db.session.query(db.Series).all())
+    views = len(ub.session.query(ub.ViewBook.id).all())
+
+    users = ub.session.query(ub.User.id.label('id'),
+                             ub.User.nickname.label('nickname'),
+                             func.count(ub.ViewBook.book_id).label('total')).\
+                            select_from(ub.ViewBook).\
+                            join(ub.User).group_by(ub.ViewBook.user_id).all()
+
+    bookscounter = ub.session.query(
+                            ub.ViewBook.book_id.label('book_id'),
+                            func.count(ub.ViewBook.book_id).label('total')). \
+                            select_from(ub.ViewBook). \
+                            group_by(ub.ViewBook.book_id).all()
+
+    books = []
+    for entry in bookscounter:
+        book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(db.Books.id == entry.book_id).first()
+        books.append(book)
+
+    return render_title_template('statistics.html', bookcounter=counter, authorcounter=authors,
+                                 categorycounter=categorys, seriecounter=series,
+                                 viewcounter=views,
+                                 users=users,
+                                 bookscounter=bookscounter, books=books,
+                                 title=_(u"Statistics"))
+
+
+@app.route("/statistics/users/<int:user_id>")
+@login_required_if_no_ano
+def statistics_user(user_id):
+    conn = ub.session.connection()
+    result = conn.execute("""SELECT
+                          book_view_link.id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                          group_concat(DATE(book_view_link.date_at) || ' ' || TIME(book_view_link.time_at)) AS datetime_concat
+                        FROM book_view_link JOIN (
+                          SELECT book_view_link.id AS id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                            DATE(book_view_link.date_at) AS date_at,
+                            TIME(book_view_link.time_at) AS time_at
+                        FROM book_view_link
+                        WHERE book_view_link.user_id = :user_id
+                        ORDER BY book_view_link.date_at DESC, book_view_link.time_at DESC
+                        ) AS subquery ON (subquery.id = book_view_link.id)
+                        WHERE book_view_link.user_id = :user_id
+                        GROUP BY book_view_link.book_id""", user_id).fetchall()
+
+    books = []
+    items = []
+    for row in result:
+        items.append(dict(row))
+        book = db.session.query(db.Books.title.label('title')).filter(db.Books.id == row[1]).first()
+        books.append(book)
+
+    user = ub.session.query(ub.User.nickname.label('nickname')).select_from(ub.User).filter(
+        ub.User.id == user_id).first()
+
+    if user:
+        return render_title_template('statistics_user_detail.html',  books=books, is_xhr=request.is_xhr,
+                                     items=items,
+                                     title="<h3>%s</h3>" % user.nickname)
+    else:
+        flash(_(u"Error opening eBook. File does not exist or file is not accessible:"), category="error")
+        return redirect(url_for("index"))
+
+
+@app.route("/statistics/books/<int:book_id>")
+@login_required_if_no_ano
+def statistics_book(book_id):
+    conn = ub.session.connection()
+    result = conn.execute("""SELECT
+                          book_view_link.id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                          subquery.nickname,
+                          group_concat(DATE(book_view_link.date_at) || ' ' || TIME(book_view_link.time_at)) AS datetime_concat
+                        FROM book_view_link JOIN (
+                          SELECT book_view_link.id AS id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                            u.nickname AS nickname,
+                            DATE(book_view_link.date_at) AS date_at,
+                            TIME(book_view_link.time_at) AS time_at
+                        FROM book_view_link
+                        JOIN user u ON book_view_link.user_id = u.id
+                        WHERE book_view_link.book_id = :book_id
+                        ORDER BY book_view_link.date_at DESC, book_view_link.time_at DESC
+                        ) AS subquery ON (subquery.id = book_view_link.id)
+                        WHERE book_view_link.book_id = :book_id
+                        GROUP BY book_view_link.user_id""", book_id).fetchall()
+
+    items = []
+    for row in result:
+        items.append(dict(row))
+
+    book = db.session.query(db.Books.title.label('title')).filter(db.Books.id == book_id).first()
+
+    if items:
+        return render_title_template('statistics_book_detail.html', items=items, is_xhr=request.is_xhr,
+                                 title="<h3>%s</h3>" % book.title)
+    else:
+        flash(_(u"Error opening eBook. File does not exist or file is not accessible:"), category="error")
+        return redirect(url_for("index"))
 
 
 @app.route("/delete/<int:book_id>/")
@@ -1664,10 +1804,38 @@ def update():
 @login_required_if_no_ano
 def search():
     term = request.args.get("query").strip().lower()
+    try:
+        key = request.args.get("key")
+        value = request.args.get("value")
+    except NameError:
+        key = None
+        value = None
 
     if term:
         db.session.connection().connection.connection.create_function("lower", 1, db.lcase)
-        entries = db.session.query(db.Books).filter(db.or_(db.Books.tags.any(db.Tags.name.ilike("%" + term + "%")),
+        if key and value:
+            key = key.strip().lower()
+            value = value.strip()
+            if key == 'tags':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.tags.any(db.Tags.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.tags.any(db.Tags.id == value))
+                ).filter(common_filters()).all()
+            if key == 'series':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.series.any(db.Series.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.series.any(db.Series.id == value))) \
+                    .filter(common_filters()).all()
+            if key == 'authors':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.authors.any(db.Authors.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.authors.any(db.Authors.id == value))) \
+                    .filter(common_filters()).all()
+        else:
+            entries = db.session.query(db.Books).filter(db.or_(db.Books.tags.any(db.Tags.name.ilike("%" + term + "%")),
                                                     db.Books.series.any(db.Series.name.ilike("%" + term + "%")),
                                                     db.Books.authors.any(db.Authors.name.ilike("%" + term + "%")),
                                                     db.Books.publishers.any(db.Publishers.name.ilike("%" + term + "%")),

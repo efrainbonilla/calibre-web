@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>{{title}}</h2>
+<h2>{{title}} {% include 'search-custom.html' %} </h2>
 
 {% if author is not none %}
 <section class="author-bio">
