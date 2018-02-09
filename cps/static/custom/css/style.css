@@ -1,0 +1,89 @@
+@font-face {
+    font-family: 'DTLProkyonSTMedium';
+    src: url('fonts/ProkyonMedium/DTLProkyonSTMedium.eot?#iefix') format('embedded-opentype'), url('fonts/ProkyonMedium/DTLProkyonSTMedium.otf') format('opentype'), url('fonts/ProkyonMedium/DTLProkyonSTMedium.woff') format('woff'), url('fonts/ProkyonMedium/DTLProkyonSTMedium.ttf') format('truetype'), url('fonts/ProkyonMedium/DTLProkyonSTMedium.svg#DTLProkyonSTMedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'FagoCo-Medium';
+  src: url('fonts/FagoCoMedium/FagoCo-Medium.eot?#iefix') format('embedded-opentype'),  url('fonts/FagoCoMedium/FagoCo-Medium.woff') format('woff'), url('fonts/FagoCoMedium/FagoCo-Medium.ttf')  format('truetype'), url('fonts/FagoCoMedium/FagoCo-Medium.svg#FagoCo-Medium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'FedraSansCondStd-Bold';
+  src: url('fonts/FedraSansCondStdBold/FedraSansCondStd-Bold.eot?#iefix') format('embedded-opentype'),  url('fonts/FedraSansCondStdBold/FedraSansCondStd-Bold.otf')  format('opentype'),
+	     url('fonts/FedraSansCondStdBold/FedraSansCondStd-Bold.woff') format('woff'), url('fonts/FedraSansCondStdBold/FedraSansCondStd-Bold.ttf')  format('truetype'), url('fonts/FedraSansCondStdBold/FedraSansCondStd-Bold.svg#FedraSansCondStd-Bold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.navbar-brand {
+	font-family: 'DTLProkyonSTMedium';
+	font-size: 20px;
+	margin-left: 40px!important;
+	color: #3C3B2D!important;
+	padding: 7px 15px 23px;
+}
+.navbar-header:after {
+	background-image: url('../images/iconSenapi.png');
+    background-repeat: no-repeat;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+}
+.navbar-header:before {
+	font-family: 'FedraSansCondStd-Bold';
+    content: 'Registros  y Resoluciones SENAPI';
+    position: absolute;
+    margin-left: 58px;
+    margin-top: 30px;
+}
+
+body > .container-fluid:before {
+    background-image: url('../images/logoSenapiAgua.png');
+    background-repeat: no-repeat;
+    width: 30%;
+    height: 100%;
+    right: 2%;
+    position: absolute;
+    background-size: contain;
+    background-position: top;
+}
+
+
+/*overide*/
+
+.well {
+    background-color: transparent;
+}
+
+
+@media (max-width: 768px) {
+   .container-fluid:before {
+    	width: 93%;
+    	right: 5%;
+   }
+}
+
+@media (max-width: 405px) {
+  .navbar-brand {
+    display: none;
+  }
+  .navbar-form {
+    margin-left: 28px;
+  }
+  .navbar-header:before {
+    display: none;
+  }
+}
+
+@media (max-width: 200px) {
+  .navbar-form {
+    margin-left: 0px;
+  }
+}
