@@ -12,10 +12,6 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/libs/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" media="screen">
-    {% if g.user.get_theme == 1 %}
-       <link href="{{ url_for('static', filename='css/caliBlur-style.css') }}" rel="stylesheet" media="screen">
-    {% endif %}
-    <link href="{{ url_for('static', filename='custom/css/style.css') }}" rel="stylesheet" media="screen">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -60,13 +56,13 @@
             {% if g.user.is_authenticated or g.user.is_anonymous %}
               {% if g.user.role_upload() or g.user.role_admin()%}
                 {% if g.allow_upload %}
-                  <li>
-                    <form id="form-upload" class="navbar-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
-                      <div class="form-group">
-                        <span class="btn btn-default btn-file">{{_('Upload')}}<input id="btn-upload" name="btn-upload" type="file" multiple></span>
-                      </div>
-                    </form>
-                  </li>
+                    <li>
+                      <form id="form-upload" class="navbar-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                          <span class="btn btn-default btn-file">{{_('Upload')}} <input id="btn-upload" name="btn-upload" type="file"></span>
+                        </div>
+                      </form>
+                    </li>
                 {% endif %}
               {% endif %}
               {% if g.user.role_admin() %}
@@ -102,14 +98,6 @@
       </div>
       {%endif%}
     {% endfor %}
-    <div id="loader" hidden="true">
-      <center>
-        <h3>{{_('Uploading...')}}</h3>
-        <span>{{_("please don't refresh the page")}}</span>.
-        <br />
-        <img src="{{ url_for('static', filename='img/loader.gif') }}">
-      </center>
-    </div>
     <div class="container-fluid">
       <div class="row-fluid">
         {% if g.user.is_authenticated or g.user.is_anonymous %}
@@ -162,20 +150,17 @@
                 <li id="nav_lang"><a href="{{url_for('language_overview')}}"><span class="glyphicon glyphicon-flag"></span> {{_('Languages')}} </a></li>
               {%endif%}
               {% if g.user.is_authenticated or g.user.is_anonymous %}
-{#                <li class="nav-head hidden-xs">{{_('Public Shelves')}}</li>#}
-{#                {% for shelf in g.public_shelfes %}#}
-{#                  <li><a href="{{url_for('show_shelf', shelf_id=shelf.id)}}"><span class="glyphicon glyphicon-list"></span> {{shelf.name}}</a></li>#}
-{#                {% endfor %}#}
+                <li class="nav-head hidden-xs">{{_('Public Shelves')}}</li>
+                {% for shelf in g.public_shelfes %}
+                  <li><a href="{{url_for('show_shelf', shelf_id=shelf.id)}}"><span class="glyphicon glyphicon-list"></span> {{shelf.name}}</a></li>
+                {% endfor %}
                 <li class="nav-head hidden-xs">{{_('Your Shelves')}}</li>
                 {% for shelf in g.user.shelf %}
                   <li><a href="{{url_for('show_shelf', shelf_id=shelf.id)}}"><span class="glyphicon glyphicon-list"></span> {{shelf.name}}</a></li>
                 {% endfor %}
-                  <li id="nav_createshelf" class="create-shelf"><a href="{{url_for('create_shelf')}}">{{_('Create a Shelf')}}</a></li>
-              {% if g.user.role_admin() and g.user.show_best_rated_books() and g.user.show_best_rated_books() and  g.user.show_hot_books() %}
+              {% if not g.user.is_anonymous %}
+                <li id="nav_createshelf" class="create-shelf"><a href="{{url_for('create_shelf')}}">{{_('Create a Shelf')}}</a></li>
                 <li id="nav_about"><a href="{{url_for('stats')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('About')}}</a></li>
-              {% endif %}
-              {% if g.user.role_admin()%}
-                <li id="nav_about"><a href="{{url_for('statistics')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('Estadísticas')}}</a></li>
               {% endif %}
               {% endif %}
 
@@ -225,50 +210,6 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="bookViewModal" tabindex="-1" role="dialog" aria-labelledby="bookViewModalLabel">
-        <div class="modal-dialog" style="width:100%" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title" id="bookViewModalLabel">{{_('Book Details')}}</h4>
-                </div>
-                <div class="modal-body" style="padding:0px;"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="userHistoryModal" tabindex="-1" role="dialog" aria-labelledby="userHistoryModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="userHistoryModalLabel">{{_('Detalle usuario')}}</h4>
-                </div>
-                <div class="modal-body">...</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="bookHistoryModal" tabindex="-1" role="dialog" aria-labelledby="bookHistoryModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="bookHistoryModalLabel">{{_('Detalle documento')}}</h4>
-                </div>
-                <div class="modal-body">...</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
     {% block modal %}{% endblock %}
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -282,15 +223,12 @@
     <script src="{{ url_for('static', filename='js/libs/plugins.js') }}"></script>
     <script src="{{ url_for('static', filename='js/libs/jquery.form.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='custom/js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='custom/js/shortcut.js') }}"></script>
     <script type="text/javascript">
-    $(function () {
-      $("#btn-upload").change(function () {
-        $("#loader").show();
-        $("#form-upload").submit();
-      });
-    });
+        $(function() {
+            $("#btn-upload").change(function() {
+                $("#form-upload").submit();
+            });
+        });
     </script>
 
     {% block js %}{% endblock %}

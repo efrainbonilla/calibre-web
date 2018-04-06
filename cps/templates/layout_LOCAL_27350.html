@@ -12,9 +12,6 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/libs/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" media="screen">
-    {% if g.user.get_theme == 1 %}
-       <link href="{{ url_for('static', filename='css/caliBlur-style.css') }}" rel="stylesheet" media="screen">
-    {% endif %}
     <link href="{{ url_for('static', filename='custom/css/style.css') }}" rel="stylesheet" media="screen">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -60,13 +57,13 @@
             {% if g.user.is_authenticated or g.user.is_anonymous %}
               {% if g.user.role_upload() or g.user.role_admin()%}
                 {% if g.allow_upload %}
-                  <li>
-                    <form id="form-upload" class="navbar-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
-                      <div class="form-group">
-                        <span class="btn btn-default btn-file">{{_('Upload')}}<input id="btn-upload" name="btn-upload" type="file" multiple></span>
-                      </div>
-                    </form>
-                  </li>
+                    <li>
+                      <form id="form-upload" class="navbar-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                          <span class="btn btn-default btn-file">{{_('Upload')}} <input id="btn-upload" name="btn-upload" type="file"></span>
+                        </div>
+                      </form>
+                    </li>
                 {% endif %}
               {% endif %}
               {% if g.user.role_admin() %}
@@ -102,14 +99,6 @@
       </div>
       {%endif%}
     {% endfor %}
-    <div id="loader" hidden="true">
-      <center>
-        <h3>{{_('Uploading...')}}</h3>
-        <span>{{_("please don't refresh the page")}}</span>.
-        <br />
-        <img src="{{ url_for('static', filename='img/loader.gif') }}">
-      </center>
-    </div>
     <div class="container-fluid">
       <div class="row-fluid">
         {% if g.user.is_authenticated or g.user.is_anonymous %}
@@ -285,12 +274,11 @@
     <script src="{{ url_for('static', filename='custom/js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='custom/js/shortcut.js') }}"></script>
     <script type="text/javascript">
-    $(function () {
-      $("#btn-upload").change(function () {
-        $("#loader").show();
-        $("#form-upload").submit();
-      });
-    });
+        $(function() {
+            $("#btn-upload").change(function() {
+                $("#form-upload").submit();
+            });
+        });
     </script>
 
     {% block js %}{% endblock %}

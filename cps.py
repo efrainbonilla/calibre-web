@@ -29,10 +29,19 @@ if __name__ == '__main__':
             web.start_gevent()
         else:
             web.app.logger.info('Falling back to Tornado')
-            http_server = HTTPServer(WSGIContainer(web.app))
+            # Max Buffersize set to 200MB
+            if web.ub.config.get_config_certfile() and web.ub.config.get_config_keyfile():
+                ssl={"certfile": web.ub.config.get_config_certfile(),
+                     "keyfile": web.ub.config.get_config_keyfile()}
+            else:
+                ssl=None
+            http_server = HTTPServer(WSGIContainer(web.app),
+                            max_buffer_size = 209700000,
+                            ssl_options=ssl)
             http_server.listen(web.ub.config.config_port)
             IOLoop.instance().start()
             IOLoop.instance().close(True)
+
 
     if web.helper.global_task == 0:
         web.app.logger.info("Performing restart of Calibre-web")

@@ -12,7 +12,7 @@ Calibre Web is a web app providing a clean interface for browsing, reading and d
 - full graphical setup
 - User management with fine grained per-user permissions
 - Admin interface
-- User Interface in dutch, english, french, german, italian, polish, russian, simplified chinese, spanish
+- User Interface in dutch, english, french, german, italian, japanese, polish, russian, simplified chinese, spanish
 - OPDS feed for eBook reader apps 
 - Filter and search by titles, authors, tags, series and language
 - Create custom book collection (shelves)
@@ -82,7 +82,8 @@ Once a project has been created, we need to create a client ID and a client secr
 4. Click Create Credentials and OAuth Client ID
 5. Select Web Application and then next
 6. Give the Credentials a name and enter your callback, which will be CALIBRE_WEB_URL/gdrive/callback
-7. Finally click save
+7. Click save
+8. Download json file and place it in `calibre-web/cps` directory, with the name `client_secrets.json`  
 
 The Drive API should now be setup and ready to use, so we need to integrate it into Calibre-Web. This is done as below: -
 
@@ -92,15 +93,17 @@ The Drive API should now be setup and ready to use, so we need to integrate it i
 3. Enter Client Secret and Client Key as provided via previous steps
 4. Enter the folder that is the root of your calibre library
 5. Enter base URL for calibre (used for google callbacks)
-6. Now select Authenticate Google Drive
-7. This should redirect you to google to allow it top use your Drive, and then redirect you back to the config page
-8. Google Drive should now be connected and be used to get images and download Epubs. The metadata.db is stored in the calibre library location
+6. Click the "Submit" button
+7. Come back to the configuration form
+8. Now select Authenticate Google Drive
+9. This should redirect you to google to allow it top use your Drive, and then redirect you back to the config page
+10. Google Drive should now be connected and be used to get images and download Epubs. The metadata.db is stored in the calibre library location
 
 ### Optional
 If your calibre web is using https, it is possible to add a "watch" to the drive. This will inform us if the metadata.db file is updated and allow us to update our calibre library accordingly.
 
-9. Click enable watch of metadata.db
-10. Note that this expires after a week, so will need to be manually refresh 
+11. Click enable watch of metadata.db
+12. Note that this expires after a week, so will need to be manually refresh 
 
 ## Docker image
 
@@ -152,6 +155,14 @@ Listen 443
 </VirtualHost>
 ```
 
+## (Optional) SSL Configuration
+
+For configuration of calibre-web as SSL Server go to the Config page in the Admin section. Enter the certfile- and keyfile-location, optionally change port to 443 and press submit. 
+Afterwards the server can only be accessed via SSL. In case of a misconfiguration (wrong/invalid files) both files can be overridden via command line options 
+-c [certfile location] -k [keyfile location]
+By using "" as file locations the server runs as non SSL server again. The correct file path can than be entered on the Config page. After the next restart without command line options the changed file paths are applied.
+
+
 ## Start Calibre-Web as service under Linux
 
 Create a file "cps.service" as root in the folder /etc/systemd/system with the following content:
@@ -180,5 +191,6 @@ Starting the script with `-h` lists all supported command line options
 Currently supported are 2 options, which are both useful for running multiple instances of Calibre-Web
 
 `"-p path"` allows to specify the location of the settings database 
-`"-p path"` allows to specify the location of the google-drive database 
-
+`"-g path"` allows to specify the location of the google-drive database 
+`"-c path"` allows to specify the location of SSL certfile, works only in combination with keyfile 
+`"-k path"` allows to specify the location of SSL keyfile, works only in combination with certfile 
