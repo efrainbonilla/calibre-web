@@ -1501,6 +1501,44 @@ def stats():
     return render_title_template('stats.html', bookcounter=counter, authorcounter=authors, versions=versions,
                                  categorycounter=categorys, seriecounter=series, title=_(u"Statistics"))
 
+@app.route("/reports")
+@login_required
+def reports():
+
+    reports = [
+        {'key': 'docquery', 'value': 'Documentos consultados'}
+    ]
+
+    dateFormat = [
+        {'key': 'day', 'value': 'Dia'},
+        {'key': 'dayBefore', 'value': 'Dia Anterior'},
+        {'key': 'week', 'value': 'Semana'},
+        {'key': 'weekBefore', 'value': 'Semana Anterior'},
+        {'key': 'month', 'value': 'Mes'},
+        {'key': 'monthBefore', 'value': 'Mes Anterior'}
+    ]
+
+    dateFormatMonth = [
+        {'key': 'January', 'value': 'Enero'},
+        {'key': 'February', 'value': 'Febrero'},
+        {'key': 'March', 'value': 'Marzo'},
+        {'key': 'April', 'value': 'Abril' },
+        {'key': 'May', 'value': 'Mayo' },
+        {'key': 'June', 'value': 'Junio'},
+        {'key': 'July', 'value': 'Julio'},
+        {'key': 'August', 'value': 'Agosto'},
+        {'key': 'September', 'value': 'Septiembre'},
+        {'key': 'October', 'value': 'Octubre'},
+        {'key': 'November', 'value': 'Noviembre'},
+        {'key': 'December', 'value': 'Diciembre'}
+    ]
+    dateFormatYear = [
+        {'key': '2018', 'value': '2018'}
+    ]
+
+    results = [];
+
+    return render_title_template('reports_form.html', results=results, reports=reports,dateFormat=dateFormat, dateFormatMonth=dateFormatMonth, dateFormatYear=dateFormatYear,  title=_(u"Reportes"))
 
 @app.route("/statistics")
 @login_required

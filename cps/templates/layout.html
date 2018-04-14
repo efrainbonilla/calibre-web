@@ -176,6 +176,7 @@
               {% endif %}
               {% if g.user.role_admin()%}
                 <li id="nav_about"><a href="{{url_for('statistics')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('Estadísticas')}}</a></li>
+                <li id="nav_about"><a href="{{url_for('reports')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('Informes')}}</a></li>
               {% endif %}
               {% endif %}
 
