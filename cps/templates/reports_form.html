@@ -40,7 +40,7 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <select class="form-control" name="dateFormat">
-                                                {% for dt in dateFormat %}
+                                                {% for dt in dateFormats %}
                                                     <option label="{{ dt.value }}" value="{{ dt.key }}">{{ dt.value }}</option>
                                                 {% endfor %}
                                             </select>
@@ -66,13 +66,13 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <select class="form-control" name="dateFormatMonth">
-                                                {% for dtm in dateFormatMonth %}
+                                                {% for dtm in dateFormatMonths %}
                                                     <option label="{{ dtm.value }}" value="{{ dtm.key }}" selected="selected">{{ dtm.value }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                             <select class="form-control" name="dateFormatYear">
+                                             <select class="form-control" name="dateFormatYears">
                                                  {% for dty in dateFormatYear %}
                                                 <option label="{{ dty.value }}" value="{{ dty.key }}">{{ dty.value }}</option>
                                                  {% endfor %}
@@ -162,6 +162,10 @@
         <div class="">
             Resultados de reportes
         </div>
+    {% endif %}
+    {% if dateFrom and dateTo %}
+        <p>{{ dateFrom }}</p>
+        <p>{{ dateTo }}</p>
     {% endif %}
 </div>
 {% endblock %}

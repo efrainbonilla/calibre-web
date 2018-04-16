@@ -62,6 +62,7 @@ import base64
 from sqlalchemy.sql import *
 import json
 import datetime
+import calendar
 from iso639 import languages as isoLanguages
 from iso639 import __version__ as iso639Version
 from uuid import uuid4
@@ -1504,12 +1505,11 @@ def stats():
 @app.route("/reports")
 @login_required
 def reports():
-
     reports = [
         {'key': 'docquery', 'value': 'Documentos consultados'}
     ]
 
-    dateFormat = [
+    dateFormats = [
         {'key': 'day', 'value': 'Dia'},
         {'key': 'dayBefore', 'value': 'Dia Anterior'},
         {'key': 'week', 'value': 'Semana'},
@@ -1518,12 +1518,16 @@ def reports():
         {'key': 'monthBefore', 'value': 'Mes Anterior'}
     ]
 
-    dateFormatMonth = [
+    dateFormatsKeys = []
+    for x in dateFormats:
+        dateFormatsKeys.append(x.get('key'))
+
+    dateFormatMonths = [
         {'key': 'January', 'value': 'Enero'},
         {'key': 'February', 'value': 'Febrero'},
         {'key': 'March', 'value': 'Marzo'},
-        {'key': 'April', 'value': 'Abril' },
-        {'key': 'May', 'value': 'Mayo' },
+        {'key': 'April', 'value': 'Abril'},
+        {'key': 'May', 'value': 'Mayo'},
         {'key': 'June', 'value': 'Junio'},
         {'key': 'July', 'value': 'Julio'},
         {'key': 'August', 'value': 'Agosto'},
@@ -1532,13 +1536,93 @@ def reports():
         {'key': 'November', 'value': 'Noviembre'},
         {'key': 'December', 'value': 'Diciembre'}
     ]
-    dateFormatYear = [
-        {'key': '2018', 'value': '2018'}
-    ]
+
+    dateFormatMonthsKeys = []
+    for x in dateFormatMonths:
+        dateFormatMonthsKeys.append(x.get('key'))
+
+
+    dateFormatYears = []
+    for y in range(2017, int(datetime.datetime.today().strftime("%Y"))):
+        dateFormatYears.append({'key': datetime.datetime.today().strftime("%Y"), 'value': datetime.datetime.today().strftime("%Y")})
+
+    dateFormatYearsKeys = []
+    for x in dateFormatYears:
+        dateFormatYearsKeys.append(x.get('key'))
+
+
+    if request.method == 'GET':
+        report = request.args.get("report")
+        optionDate = request.args.get("optionDate")
+
+        dateFrom = dateTo = None
+
+        if report:
+            report = report.strip().lower()
+
+        if optionDate == 'between' and request.args.get("dateFrom") and request.args.get("dateTo"):
+            dateFrom = datetime.datetime.strftime(request.args.get("dateFrom"))
+            dateTo = datetime.datetime.strftime(request.args.get("dateTo"))
+        elif optionDate == 'del' and request.args.get("dateFormat") in dateFormatsKeys:
+            dateFormat = request.args.get("dateFormat")
+            now = datetime.datetime.today()
+
+            if dateFormat == 'day':
+                dateFrom = now
+                dateTo = now
+
+            if dateFormat == 'dayBefore':
+                dateFrom = now - datetime.timedelta(days=1)
+                dateTo = dateFrom
+
+            if dateFormat == 'week':
+                dateFrom = now - datetime.timedelta(days=now.weekday())
+                dateTo = dateFrom + datetime.timedelta(days=6)
+
+            if dateFormat == 'weekBefore':
+                dateFrom = now - datetime.timedelta(days=now.weekday()+7)
+                dateTo = dateFrom + datetime.timedelta(days=6)
+
+
+            if dateFormat == 'month':
+                dateFrom = now.replace(day=1)
+                dateTo = now.replace(day=calendar.monthrange(now.year, now.month)[1])
+
+            if dateFormat == 'monthBefore':
+                if now.month == 1:
+                    year = now.year - 1
+                    month = 12
+                else:
+                    year = now.year
+                    month = now.month - 1
+
+                day=calendar.monthrange(year, month)[1]
+                dateMonthBefore = datetime.date(year, month, day)
+
+                dateFrom = dateMonthBefore.replace(day=1)
+                dateTo = dateMonthBefore.replace(day=day)
+
+            if dateFormat == 'all':
+                dateFrom = None
+                dateTo = now
+
+
+        elif optionDate == 'month' and (request.args.get("dateFormatMonth") in dateFormatMonthsKeys) and (request.args.get("dateFormatMonth") in dateFormatYearsKeys):
+            dateFormatYear = request.args.get("dateFormatYear")
+            year = request.args.get("dateFormatMonth")
+            month = dateFormatMonthsKeys.index(year) + 1
+            day = calendar.monthrange(year, month)[1]
+            dateMonth = datetime.date(year, month, day)
+
+            dateFrom = dateMonth.replace(day=1)
+            dateTo = dateMonth.replace(day=day)
+
+        dateFrom = datetime.datetime(dateFrom.year, dateFrom.month, dateFrom.day, hour=0, minute=0, second=0)
+        dateTo = datetime.datetime(dateTo.year, dateTo.month, dateTo.day, hour=23, minute=59, second=59)
 
     results = [];
 
-    return render_title_template('reports_form.html', results=results, reports=reports,dateFormat=dateFormat, dateFormatMonth=dateFormatMonth, dateFormatYear=dateFormatYear,  title=_(u"Reportes"))
+    return render_title_template('reports_form.html', dateFrom=dateFrom, dateTo=dateTo, results=results, reports=reports,dateFormats=dateFormats, dateFormatMonths=dateFormatMonths, dateFormatYears=dateFormatYears,  title=_(u"Reportes"))
 
 @app.route("/statistics")
 @login_required
