@@ -1550,6 +1550,7 @@ def reports():
     for x in dateFormatYears:
         dateFormatYearsKeys.append(x.get('key'))
 
+    results = []
 
     if request.method == 'GET':
         report = request.args.get("report")
@@ -1557,13 +1558,34 @@ def reports():
 
         dateFrom = dateTo = None
 
+        requestQuery = {
+            'report': None,
+            'optionDate': None,
+            'dateFrom': None,
+            'dateTo': None,
+            'dateFormat': None,
+            'dateFormatMonth': None,
+            'dateFormatYear': None
+        }
+
         if report:
+            requestQuery['report'] = report
             report = report.strip().lower()
 
         if optionDate == 'between' and request.args.get("dateFrom") and request.args.get("dateTo"):
-            dateFrom = datetime.datetime.strftime(request.args.get("dateFrom"))
-            dateTo = datetime.datetime.strftime(request.args.get("dateTo"))
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFrom'] = request.args.get("dateFrom")
+            requestQuery['dateTo'] = request.args.get("dateTo")
+
+            year, month, day = request.args.get("dateFrom").split('-')
+            dateFrom = datetime.date(int(year), int(month), int(day))
+            year, month, day = request.args.get("dateTo").split('-')
+            dateTo = datetime.date(int(year), int(month), int(day))
+
         elif optionDate == 'del' and request.args.get("dateFormat") in dateFormatsKeys:
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFormat'] = request.args.get("dateFormat")
+
             dateFormat = request.args.get("dateFormat")
             now = datetime.datetime.today()
 
@@ -1606,23 +1628,47 @@ def reports():
                 dateFrom = None
                 dateTo = now
 
+        elif optionDate == 'month' and (request.args.get("dateFormatMonth") in dateFormatMonthsKeys) and (request.args.get("dateFormatYear") in dateFormatYearsKeys):
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFormatMonth'] = request.args.get("dateFormatMonth")
+            requestQuery['dateFormatYear'] = request.args.get("dateFormatYear")
 
-        elif optionDate == 'month' and (request.args.get("dateFormatMonth") in dateFormatMonthsKeys) and (request.args.get("dateFormatMonth") in dateFormatYearsKeys):
-            dateFormatYear = request.args.get("dateFormatYear")
-            year = request.args.get("dateFormatMonth")
-            month = dateFormatMonthsKeys.index(year) + 1
+            year = int(request.args.get("dateFormatYear"))
+            month = request.args.get("dateFormatMonth")
+            month = dateFormatMonthsKeys.index(month) + 1
             day = calendar.monthrange(year, month)[1]
             dateMonth = datetime.date(year, month, day)
 
             dateFrom = dateMonth.replace(day=1)
             dateTo = dateMonth.replace(day=day)
 
-        dateFrom = datetime.datetime(dateFrom.year, dateFrom.month, dateFrom.day, hour=0, minute=0, second=0)
-        dateTo = datetime.datetime(dateTo.year, dateTo.month, dateTo.day, hour=23, minute=59, second=59)
+        if dateFrom and dateTo:
+            dateFrom = datetime.datetime(dateFrom.year, dateFrom.month, dateFrom.day, hour=0, minute=0, second=0)
+            dateTo = datetime.datetime(dateTo.year, dateTo.month, dateTo.day, hour=23, minute=59, second=59)
 
-    results = [];
+            bookscounter = ub.session.query(
+                ub.ViewBook.book_id.label('book_id'),
+                func.count(ub.ViewBook.book_id).label('total')). \
+                select_from(ub.ViewBook). \
+                group_by(ub.ViewBook.book_id).all()
 
-    return render_title_template('reports_form.html', dateFrom=dateFrom, dateTo=dateTo, results=results, reports=reports,dateFormats=dateFormats, dateFormatMonths=dateFormatMonths, dateFormatYears=dateFormatYears,  title=_(u"Reportes"))
+            books = []
+            for entry in bookscounter:
+                book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(
+                    db.Books.id == entry.book_id).first()
+                books.append(book)
+
+
+    return render_title_template('reports_form.html',
+                                 dateFrom=dateFrom,
+                                 dateTo=dateTo,
+                                 requestQuery=requestQuery,
+                                 results=results,
+                                 reports=reports,
+                                 dateFormats=dateFormats,
+                                 dateFormatMonths=dateFormatMonths,
+                                 dateFormatYears=dateFormatYears,
+                                 title=_(u"Reportes"))
 
 @app.route("/statistics")
 @login_required

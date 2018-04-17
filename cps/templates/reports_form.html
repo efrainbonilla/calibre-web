@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="col-sm-8">
-  <form role="form" id="search" action="{{ url_for('reports') }}" method="GET">
+  <form role="form" id="formReports" name="formReports" action="{{ url_for('reports') }}" method="GET">
     <!--div class="form-group"-->
       <div class="bs-callout bs-callout-info">
         <div class="page-header">
@@ -11,7 +11,11 @@
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <select class="form-control" name="report" required="required">
                     {% for report in reports %}
-                        <option value="{{ report.key }}" selected="selected">{{ report.value }}</option>
+                        {% if requestQuery.report %}
+                            <option value="{{ report.key }}" selected="selected">{{ report.value }}</option>
+                        {% else %}
+                            <option value="{{ report.key }}">{{ report.value }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -30,18 +34,27 @@
                             <td colspan="2">
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" value="del"  class="" name="optionDate" checked="checked">
+                                        {% if requestQuery.optionDate == 'del' %}
+                                            <input type="radio" value="del"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="del"  class="" name="optionDate">
+                                        {% endif %}
                                         Del
                                     </label>
                                 </div>
                             </td>
                             <td>
-                                <fieldset id="del">
+                                <fieldset id="del" disabled="disabled">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <select class="form-control" name="dateFormat">
                                                 {% for dt in dateFormats %}
-                                                    <option label="{{ dt.value }}" value="{{ dt.key }}">{{ dt.value }}</option>
+                                                    {% if requestQuery.dateFormat and dt.key == requestQuery.dateFormat %}
+                                                        <option label="{{ dt.value }}" value="{{ dt.key }}" selected="selected">{{ dt.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ dt.value }}" value="{{ dt.key }}">{{ dt.value }}</option>
+                                                    {% endif %}
+
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -56,25 +69,37 @@
                             <td colspan="2">
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" value="month" name="optionDate">
+                                        {% if requestQuery.optionDate == 'month' %}
+                                            <input type="radio" value="month"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="month"  class="" name="optionDate">
+                                        {% endif %}
                                         Por mes
                                     </label>
                                 </div>
                             </td>
                             <td>
-                                <fieldset id="month" disabled="disabled">
+                                <fieldset id="month"  disabled="disabled">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <select class="form-control" name="dateFormatMonth">
                                                 {% for dtm in dateFormatMonths %}
-                                                    <option label="{{ dtm.value }}" value="{{ dtm.key }}" selected="selected">{{ dtm.value }}</option>
+                                                    {% if requestQuery.dateFormatMonth and dtm.key == requestQuery.dateFormatMonth %}
+                                                        <option label="{{ dtm.value }}" value="{{ dtm.key }}" selected="selected">{{ dtm.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ dtm.value }}" value="{{ dtm.key }}">{{ dtm.value }}</option>
+                                                    {% endif %}
                                                 {% endfor %}
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                             <select class="form-control" name="dateFormatYears">
-                                                 {% for dty in dateFormatYear %}
-                                                <option label="{{ dty.value }}" value="{{ dty.key }}">{{ dty.value }}</option>
+                                             <select class="form-control" name="dateFormatYear">
+                                                 {% for dty in dateFormatYears %}
+                                                     {% if requestQuery.dateFormatYear and dty.key == requestQuery.dateFormatYear %}
+                                                         <option label="{{ dty.value }}" value="{{ dty.key }}" selected="selected">{{ dty.value }}</option>
+                                                     {% else %}
+                                                         <option label="{{ dty.value }}" value="{{ dty.key }}">{{ dty.value }}</option>
+                                                     {% endif %}
                                                  {% endfor %}
                                             </select>
                                         </div>
@@ -86,7 +111,11 @@
                             <td colspan="2">
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" value="between" name="optionDate">
+                                        {% if requestQuery.optionDate == 'between' %}
+                                            <input type="radio" value="between"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="between"  class="" name="optionDate">
+                                        {% endif %}
                                         Por rango
                                     </label>
                                 </div>
@@ -109,19 +138,21 @@
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             Desde
                                             <p class="input-group">
-                                              <input type="text" class="form-control" name="from" required="required">
-                                              <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-calendar"></i></button>
-                                              </span>
+                                                {% if requestQuery.dateFrom %}
+                                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom" value="{{ requestQuery.dateFrom }}" required="required">
+                                                {% else %}
+                                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom" required="required">
+                                                {% endif %}
                                             </p>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             Hasta
                                             <p class="input-group">
-                                              <input type="text" class="form-control" name="to" required="required">
-                                              <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-calendar"></i></button>
-                                              </span>
+                                                {% if requestQuery.dateTo %}
+                                                    <input type="date" class="form-control" name="dateTo" id="dateTo" value="{{ requestQuery.dateTo }}" required="required">
+                                                {% else %}
+                                                    <input type="date" class="form-control" name="dateTo" id="dateTo" required="required">
+                                                {% endif %}
                                             </p>
                                         </div>
                                     </div>

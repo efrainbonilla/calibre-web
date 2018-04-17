@@ -63,4 +63,50 @@ $(function() {
         .on("hidden.bs.modal", function() {
             $(this).find(".modal-body").html("...");
         });
+
+    var del = $("#del");
+    var month = $("#month");
+    var between = $("#between");
+
+    function chekedDate(value) {
+        switch (value) {
+            case 'del':
+                del.removeAttr('disabled');
+                month.attr('disabled', true);
+                between.attr('disabled', true);
+                break;
+
+            case 'month':
+                month.removeAttr('disabled');
+                del.attr('disabled', true);
+                between.attr('disabled', true);
+                break;
+
+            case 'between':
+                between.removeAttr('disabled');
+                del.attr('disabled', true);
+                month.attr('disabled', true);
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+    var checkedDefault = false;
+    $("#formReports input[type=radio]").on('change', function () {
+        chekedDate(this.value);
+    }).each(function (key, item) {
+        if ($(item).is(':checked')) {
+            checkedDefault = true;
+            chekedDate(item.value);
+        }
+    });
+
+    if (checkedDefault == false) {
+         var chk0 = $(this.formReports.optionDate[0]);
+         chk0.attr('checked', true);
+         chekedDate(chk0.val());
+    }
 });
