@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div class="bs-callout bs-callout-info">
+      <div class="bs-callout bs-callout-info" id="filterdate">
         <div class="page-header text-right">
             <h4>Filtrar por fecha <small></small></h4>
         </div>
@@ -164,69 +164,98 @@
             </div>
         </div>
       </div>
+        <div class="bs-callout bs-callout-info" id="filteruser">
+        <div class="page-header text-right">
+            <h4>Filtrar por usuario <small></small></h4>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <div class="radio">
+                                    <label class="inline">Filtrar por usuarios: &nbsp; &nbsp;</label>
+                                    <label class="inline">
+                                        {% if requestQuery.optionUser == '1' %}
+                                            <input type="radio" value="1"  class="" name="optionUser" checked="checked">SI
 
+                                        {% else  %}
+                                            <input type="radio" value="1"  class="" name="optionUser">SI
+                                        {% endif %}
+                                    </label>
+                                    <label class="inline">
+                                        {% if requestQuery.optionUser == '0' %}
+                                            <input type="radio" value="0"  class="" name="optionUser">NO
+                                        {% else  %}
+                                            <input type="radio" value="0"  class="" name="optionUser">NO
+                                        {% endif %}
+                                    </label>
 
+                                </div>
+                            </td>
+                            <td>
+                                <fieldset id="user">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <select multiple class="form-control" name="users" required="required">
+                                                {% for user in users %}
+                                                    {% if user.key|string in requestQuery.users %}
+                                                        <option label="{{ user.value }}" value="{{ user.key }}" selected="selected">{{ user.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ user.value }}" value="{{ user.key }}">{{ user.value }}</option>
+                                                    {% endif %}
 
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
-        {#<div class="row">
-            <div class="form-group col-sm-6">
-              <label for="Publishstart">{{_('Publishing date from')}}</label>
-              <div style="position: relative">
-                <input type="date" class="form-control" name="Publishstart" id="Publishstart" value="">
-                <input type="text" class="form-control fake-input hidden" id="fake_Publishstart" value="">
-              </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group col-sm-6">
-              <label for="Publishend">{{_('Publishing date to')}}</label>
-              <div style="position: relative">
-                <input type="date" class="form-control" name="Publishend" id="Publishend" value="">
-                <input type="text" class="form-control fake-input hidden" id="fake_Publishend" value="">
-              </div>
-            </div>
-        </div>#}
+        </div>
+      </div>
 
 
-    <button type="submit" class="btn btn-default">{{_('Submit')}}</button>
+
+    <button type="submit" class="btn btn-default">{{_('Consultar')}}</button>
   </form>
 
-    {% if results %}
-
-        <h3>{{_('Documentos consultados')}} <div class="pull-right"> Desde:<span>{{ dateFrom }}</span> Hasta <span>{{ dateTo }}</span></div></h3>
-
-
-        <table class="table table-bordered">
+    {% if dateFrom and  dateTo %}
+        <p>&nbsp;</p>
+        <button type="button" onclick="openPrint(this, '#print', 'SENAPI Centro Documental Digital DPI - Registros y resoluciones')" class="btn btn-default pull-right">{{_('Imprimir')}}</button>
+        <table id="print" class="table table-bordered"style="background-color: #FFFFFF">
             <tbody>
+            <tr>
+                <td colspan="6"><strong>Documentos consultados</strong> <div class="pull-right"><strong>Desde: </strong><span>{{ dateFrom|string|formatdatetime }}</span> &nbsp;&nbsp;&nbsp; <strong>Hasta: </strong> <span>{{ dateTo|string|formatdatetime }}</span></div> </td>
+            </tr>
             {% if results %}
                 <tr>
-                    <th colspan="1">Usuario</th>
+                    <th>N°</th>
+                    <th>Usuario</th>
+                    <th>N°</th>
                     <th width="40%">Documento</th>
                     <th width="30%">Fecha</th>
                     <th width="30%">Hora</th>
                 </tr>
                 {% for row in results %}
-                    {#<tr>
-                        <td colspan="1">{{ item.app.nickname }}</td>
-                        <td colspan="3" style="padding:0">
-                            <table class="table table-bordered" style="margin-bottom: 0;">
-                                <tbody>
-                                <tr>
-                                    <td width="40%"><a href="{{ url_for('show_book', book_id=item.app.book_id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">{{item.book.title}}</a></td>
-                                    <td width="30%">{{ item.app.date_at }}</td>
-                                    <td width="30%">{{ item.app.time_at }}</td>
-                                </tr>
-                                <tbody>
-                            </table>
+                    <tr id="{{ row.default.nickname }}">
+                        <td >{{ loop.index }}</td>
+                        <td ><h4>{{ row.default.nickname }}</h4>
                         </td>
-                    </tr>#}
-                    <tr>
-                        <td colspan="1"><h4>{{ row.default.nickname }}</h4></td>
                         <td colspan="4" style="padding:0">
                             {% if row['items'] %}
                             <table class="table table-bordered" style="margin-bottom: 0;">
                                 <tbody>
                                 {% for row2 in row['items'] %}
                                     <tr>
-                                    <td width="4%">{{ loop.index }}</td>
+                                        <td width="4%">{{ loop.index }}</td>
                                         <td width="40%"><a href="{{ url_for('show_book', book_id=row2.book.id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">{{row2.book.title}}</a></td>
                                         <td width="28%">{{ row2.item.datetime|formatdate }}</td>
                                         <td width="28%">{{ row2.item.time_at }}</td>
@@ -235,11 +264,11 @@
                                     <tr>
                                         <td colspan="4">
                                             <p class="text-center">
-                                            {{ row['items']|length }}
+                                            <strong>{{ row['items']|length }}</strong>
                                             {% if row['items']|length > 1 %}
-                                                Docuentos consultados
+                                                docuentos consultados
                                             {% else %}
-                                                Documento consultado
+                                                documento consultado
                                             {% endif %}
                                             </p>
                                         </td>
@@ -249,11 +278,23 @@
                             {% endif %}
                         </td>
                     </tr>
-
+                    {% if loop.last %}
+                    <tr>
+                        <td colspan="6">
+                        <p class="text-center">
+                            {% if row.count > 1 %}
+                            Total <strong>{{ row.count }}</strong> documentos consultados
+                            {% else %}
+                                Total <strong>{{ row.count }}</strong> documento consultado
+                            {% endif %}
+                        </p>
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="4">No se encontraron resultados</td>
+                    <td colspan="6" class="text-center"><span>No se encontraron resultados</span></td>
                 </tr>
             {% endif %}
             </tbody>

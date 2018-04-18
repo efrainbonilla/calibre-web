@@ -94,19 +94,120 @@ $(function() {
         }
     }
 
-    var checkedDefault = false;
-    $("#formReports input[type=radio]").on('change', function () {
+    var checkedFilterDateDefault = false;
+    $("#formReports #filterdate input[type=radio]").on('change', function () {
         chekedDate(this.value);
     }).each(function (key, item) {
         if ($(item).is(':checked')) {
-            checkedDefault = true;
+            checkedFilterDateDefault = true;
             chekedDate(item.value);
         }
     });
 
-    if (checkedDefault == false) {
+    if (checkedFilterDateDefault == false) {
          var chk0 = $(this.formReports.optionDate[0]);
          chk0.attr('checked', true);
          chekedDate(chk0.val());
     }
+
+
+
+    var user = $("#user");
+
+    function chekedUser(value) {
+        switch (value) {
+            case '1':
+                user.removeAttr('disabled');
+                break;
+
+
+            case '0':
+                user.attr('disabled', true);
+                break;
+            default:
+                return false;
+                break;
+        }
+        console.log(user, value);
+    }
+
+
+    var checkedFilterUserDefault = false;
+    $("#formReports #filteruser input[type=radio]").on('change', function () {
+        chekedUser(this.value);
+    }).each(function (key, item) {
+        if ($(item).is(':checked')) {
+            checkedFilterUserDefault = true;
+            chekedUser(item.value);
+        }
+    });
+
+    if (checkedFilterUserDefault == false) {
+         var chk0 = $(this.formReports.optionUser[1]);
+         chk0.attr('checked', true);
+         chekedUser(chk0.val());
+    }
+
 });
+
+function openPrint(event, id, title, subtitle) {
+
+
+
+    title = (title)? title : 'Title';
+    subtitle = (subtitle)? subtitle : 'Subtitle';
+
+    text = $(id)? $(id).prop('outerHTML') : id;
+
+
+    popupPrint(title,  subtitle, text, false, true);
+}
+
+function popupPrint(title, subtitle, text, headStyle, bodyContent) {
+    var win = window.open('', '_blank', 'width=730, height=500, top=50, left=50, scrollbars=1');
+
+    var head = '<html><head>';
+    head += '<title>'+title+'</title>';
+
+    if (!headStyle) {
+       head += '<link rel="STYLESHEET" type="text/css" href="/static/css/libs/bootstrap.min.css">';
+
+    }
+
+    head += '</head>';
+
+    var body = '<body>';
+
+    if (!bodyContent) {
+        body +="<table class='table table-bordered' cellSpacing='0' cellPadding='0' align='center' border='0' width='100%'>";
+        body += "<tr>";
+
+        body += "<td>";
+        body += "<table class='table table-bordered' cellSpacing='0' cellPadding='0' align='center' border='0' width='100%'>";
+        body += "<tr><td align='left' style='padding-top: 8px;'>";
+
+
+        body += "</td></tr>";
+        body += "<tr><td class='separator'>&nbsp;</td></tr>";
+        body += "<tr><td class='barraNavegacion' colspan='2'>&nbsp;"+subtitle+"</td></tr>";
+        body += "<tr><td class='separator'>&nbsp;</td></tr>";
+        body += "<tr><td>";
+        body += "<div id='content'>";
+    }
+
+    body += text;
+
+    if (!bodyContent) {
+        body += "</div></td></tr>";
+        body += "</table>";
+        body += "</td></tr>";
+        body += "</table>";
+    }
+
+    body += '</body></html>';
+
+    win.document.write(head + body);
+    win.document.close();
+
+    return win;
+}

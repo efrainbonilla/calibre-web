@@ -435,6 +435,12 @@ def formatdate_filter(val):
     formatdate = datetime.datetime.strptime(conformed_timestamp[:15], "%Y%m%d %H%M%S")
     return format_date(formatdate, format='medium', locale=get_locale())
 
+@app.template_filter('formatdatetime')
+def formatdatetime_filter(val):
+    conformed_timestamp = re.sub(r"[:]|([-](?!((\d{2}[:]\d{2})|(\d{4}))$))", '', val)
+    formatdatetime = datetime.datetime.strptime(conformed_timestamp[:15], "%Y%m%d %H%M%S")
+    return format_datetime(formatdatetime, format='medium', locale=get_locale())
+
 
 @app.template_filter('formatdateinput')
 def format_date_input(val):
@@ -1550,6 +1556,8 @@ def reports():
     for x in dateFormatYears:
         dateFormatYearsKeys.append(x.get('key'))
 
+    users = ub.session.connection().execute("""SELECT u.id AS key, u.nickname AS value FROM user u""").fetchall()
+
     results = []
 
     if request.method == 'GET':
@@ -1565,7 +1573,10 @@ def reports():
             'dateTo': None,
             'dateFormat': None,
             'dateFormatMonth': None,
-            'dateFormatYear': None
+            'dateFormatYear': None,
+
+            'optionUser': None,
+            'users': []
         }
 
         if report:
@@ -1652,14 +1663,32 @@ def reports():
             conn = ub.session.connection()
             conn2 = db.session.connection()
 
+            #users
+            optionUser = request.args.get("optionUser")
+            if optionUser == '1':
+                requestQuery['optionUser'] = optionUser
+                _users = request.args.getlist("users")
+                requestQuery['users'] = _users
+                ids = ",".join(_users)
+                result = conn.execute("""SELECT v.user_id, u.nickname,   
+                                                    group_concat(v.id) AS ids
+                                                    FROM book_view_link v
+                                                    INNER JOIN user u ON v.user_id = u.id 
+                                                    WHERE v.date_at BETWEEN :date_from AND  :date_to
+                                                    AND v.user_id IN("""+ ids +""") 
+                                                    GROUP BY v.user_id """,
+                                      date_from,
+                                      date_to).fetchall()
+            elif optionUser == '0':
+                requestQuery['optionUser'] = optionUser
 
-            result = conn.execute("""SELECT v.user_id, u.nickname,   
+                result = conn.execute("""SELECT v.user_id, u.nickname,   
                                     group_concat(v.id) AS ids
                                     FROM book_view_link v
                                     INNER JOIN user u ON v.user_id = u.id 
                                     WHERE v.date_at BETWEEN :date_from AND  :date_to GROUP BY v.user_id """, date_from,
                                   date_to).fetchall()
-
+            count = 0
             results = []
             for row in result:
                 ids = row[2]
@@ -1671,6 +1700,7 @@ def reports():
                 results2 = []
                 for row2 in result2:
                     book = row2[0]
+                    count = count  + 1
                     results2.append({
                         'item': dict(row2),
                         'book': conn2.execute("""SELECT * FROM books WHERE id =:book""", book).fetchall()[0]
@@ -1679,7 +1709,8 @@ def reports():
 
                 results.append({
                     'default': dict(row),
-                    'items': results2
+                    'items': results2,
+                    'count': count
                 })
 
 
@@ -1689,6 +1720,7 @@ def reports():
                                  requestQuery=requestQuery,
                                  results=results,
                                  reports=reports,
+                                 users=users,
                                  dateFormats=dateFormats,
                                  dateFormatMonths=dateFormatMonths,
                                  dateFormatYears=dateFormatYears,
