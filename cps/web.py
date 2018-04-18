@@ -1646,17 +1646,41 @@ def reports():
             dateFrom = datetime.datetime(dateFrom.year, dateFrom.month, dateFrom.day, hour=0, minute=0, second=0)
             dateTo = datetime.datetime(dateTo.year, dateTo.month, dateTo.day, hour=23, minute=59, second=59)
 
-            bookscounter = ub.session.query(
-                ub.ViewBook.book_id.label('book_id'),
-                func.count(ub.ViewBook.book_id).label('total')). \
-                select_from(ub.ViewBook). \
-                group_by(ub.ViewBook.book_id).all()
+            date_from = dateFrom.strftime("%Y-%m-%d")
+            date_to = dateTo.strftime("%Y-%m-%d")
 
-            books = []
-            for entry in bookscounter:
-                book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(
-                    db.Books.id == entry.book_id).first()
-                books.append(book)
+            conn = ub.session.connection()
+            conn2 = db.session.connection()
+
+
+            result = conn.execute("""SELECT v.user_id, u.nickname,   
+                                    group_concat(v.id) AS ids
+                                    FROM book_view_link v
+                                    INNER JOIN user u ON v.user_id = u.id 
+                                    WHERE v.date_at BETWEEN :date_from AND  :date_to GROUP BY v.user_id """, date_from,
+                                  date_to).fetchall()
+
+            results = []
+            for row in result:
+                ids = row[2]
+                result2 = conn.execute("""SELECT book_id, date_at, TIME(time_at) AS time_at, printf(DATE(date_at) || ' ' || TIME(time_at)) AS datetime
+                                      FROM book_view_link 
+                                      WHERE id IN ( """ + ids +""" ) 
+                                      ORDER BY date_at ASC, time_at ASC """).fetchall()
+
+                results2 = []
+                for row2 in result2:
+                    book = row2[0]
+                    results2.append({
+                        'item': dict(row2),
+                        'book': conn2.execute("""SELECT * FROM books WHERE id =:book""", book).fetchall()[0]
+                    })
+
+
+                results.append({
+                    'default': dict(row),
+                    'items': results2
+                })
 
 
     return render_title_template('reports_form.html',

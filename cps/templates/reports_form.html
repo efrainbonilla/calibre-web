@@ -190,14 +190,77 @@
   </form>
 
     {% if results %}
-        <div class="">
-            Resultados de reportes
-        </div>
+
+        <h3>{{_('Documentos consultados')}} <div class="pull-right"> Desde:<span>{{ dateFrom }}</span> Hasta <span>{{ dateTo }}</span></div></h3>
+
+
+        <table class="table table-bordered">
+            <tbody>
+            {% if results %}
+                <tr>
+                    <th colspan="1">Usuario</th>
+                    <th width="40%">Documento</th>
+                    <th width="30%">Fecha</th>
+                    <th width="30%">Hora</th>
+                </tr>
+                {% for row in results %}
+                    {#<tr>
+                        <td colspan="1">{{ item.app.nickname }}</td>
+                        <td colspan="3" style="padding:0">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <tbody>
+                                <tr>
+                                    <td width="40%"><a href="{{ url_for('show_book', book_id=item.app.book_id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">{{item.book.title}}</a></td>
+                                    <td width="30%">{{ item.app.date_at }}</td>
+                                    <td width="30%">{{ item.app.time_at }}</td>
+                                </tr>
+                                <tbody>
+                            </table>
+                        </td>
+                    </tr>#}
+                    <tr>
+                        <td colspan="1"><h4>{{ row.default.nickname }}</h4></td>
+                        <td colspan="4" style="padding:0">
+                            {% if row['items'] %}
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <tbody>
+                                {% for row2 in row['items'] %}
+                                    <tr>
+                                    <td width="4%">{{ loop.index }}</td>
+                                        <td width="40%"><a href="{{ url_for('show_book', book_id=row2.book.id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">{{row2.book.title}}</a></td>
+                                        <td width="28%">{{ row2.item.datetime|formatdate }}</td>
+                                        <td width="28%">{{ row2.item.time_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                                    <tr>
+                                        <td colspan="4">
+                                            <p class="text-center">
+                                            {{ row['items']|length }}
+                                            {% if row['items']|length > 1 %}
+                                                Docuentos consultados
+                                            {% else %}
+                                                Documento consultado
+                                            {% endif %}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                <tbody>
+                            </table>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No se encontraron resultados</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+
     {% endif %}
-    {% if dateFrom and dateTo %}
-        <p>{{ dateFrom }}</p>
-        <p>{{ dateTo }}</p>
-    {% endif %}
+
 </div>
 {% endblock %}
 
