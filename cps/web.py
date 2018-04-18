@@ -1384,7 +1384,6 @@ def view_book(book_id):
     book = ub.session.query(ub.ViewBook).filter(ub.and_(ub.ViewBook.user_id == int(current_user.id),
                                                                    ub.ViewBook.book_id == book_id,
                                                                    ub.ViewBook.date_at == datetime.datetime.now().date()
-                                                                   #, ub.ViewBook.time_at == datetime.datetime.now().time()
                                                                 )).first()
 
     if book:
@@ -1397,6 +1396,27 @@ def view_book(book_id):
         viewBook.time_at = datetime.datetime.now().time()
         book = viewBook
     ub.session.merge(book)
+    ub.session.commit()
+    return ""
+
+@login_required
+def search_book(criteria, criteria_book):
+    searchbook = ub.session.query(ub.SearchBook).filter(ub.and_(ub.SearchBook.user_id == int(current_user.id),
+                                                                   ub.SearchBook.criteria == criteria,
+                                                                   ub.SearchBook.date_at == datetime.datetime.now().date()
+                                                                )).first()
+
+    if searchbook:
+        searchbook.time_at = datetime.datetime.now().time()
+    else:
+        searchBook = ub.SearchBook()
+        searchBook.user_id = int(current_user.id)
+        searchBook.criteria = criteria
+        searchBook.criteria_book = criteria_book
+        searchBook.date_at = datetime.datetime.now().date()
+        searchBook.time_at = datetime.datetime.now().time()
+        searchbook = searchBook
+    ub.session.merge(searchbook)
     ub.session.commit()
     return ""
 
@@ -2073,6 +2093,11 @@ def search():
         #    db.Books.publishers.any(db.Publishers.name.ilike("%" + term + "%")),
         #    db.Books.title.ilike("%" + term + "%"))).all()
 
+        if entries and len(str(term)) > 2:
+            book = []
+            for entry in entries:
+                book.append(str(entry.id))
+            search_book(term, ",".join(book))
 
         return render_title_template('search.html', searchterm=term, entries=entries)
     else:
@@ -2160,6 +2185,13 @@ def advanced_search():
                 for language in exclude_languages_inputs:
                     q = q.filter(not_(db.Books.series.any(db.Languages.id == language)))
             q = q.all()
+
+            if q and len(str(searchterm)) > 2:
+                book = []
+                for entry in q:
+                    book.append(str(entry.id))
+                search_book(searchterm, ",".join(book))
+
             return render_title_template('search.html', searchterm=searchterm, entries=q, title=_(u"search"))
     tags = db.session.query(db.Tags).order_by(db.Tags.name).all()
     series = db.session.query(db.Series).order_by(db.Series.name).all()
