@@ -1,0 +1,13 @@
+{% for param in searchparams %}
+    <form class="navbar-form" style="display: inline;" role="search" action="{{url_for('web.search')}}" method="GET">
+        <div class="form-group input-group input-group-sm">
+            <label for="query" class="sr-only">{{_('Search')}}</label>
+            <input type="text" class="form-control" id="query" name="query" placeholder="{{_('Search')}}">
+            <input type="hidden" id="key" name="key" value="{{ param.key }}">
+            <input type="hidden" id="value" name="value" value="{{ param.value }}">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-default">{{_('Go!')}}</button>
+            </span>
+        </div>
+    </form>
+{% endfor %}

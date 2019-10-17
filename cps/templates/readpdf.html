@@ -30,11 +30,13 @@ See https://github.com/adobe-type-tools/cmap-resources
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/viewer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom/css/libs/viewer.css') }}">
 
     <script src="{{ url_for('static', filename='js/libs/compatibility.js') }}"></script>
 
     <!-- This snippet is used in production (included from viewer.html) -->
     <script src="{{ url_for('static', filename='js/libs/pdf.js') }}"></script>
+    <script src="{{ url_for('static', filename='custom/js/shortcut.js') }}"></script>
 
     <script type="text/javascript">
     window.addEventListener('load', function() {

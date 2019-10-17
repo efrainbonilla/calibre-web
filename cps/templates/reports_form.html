@@ -1,0 +1,325 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="col-sm-8">
+  <form role="form" id="formReports" name="formReports" action="{{ url_for('web.reports') }}" method="GET">
+    <!--div class="form-group"-->
+      <div class="bs-callout bs-callout-info">
+        <div class="page-header">
+            <h4>Informe <small></small></h4>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <select class="form-control" name="report" required="required">
+                    {% for report in reports %}
+                        {% if requestQuery.report %}
+                            <option value="{{ report.key }}" selected="selected">{{ report.value }}</option>
+                        {% else %}
+                            <option value="{{ report.key }}">{{ report.value }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+      </div>
+
+      <div class="bs-callout bs-callout-info" id="filterdate">
+        <div class="page-header text-right">
+            <h4>Filtrar por fecha <small></small></h4>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <div class="radio">
+                                    <label>
+                                        {% if requestQuery.optionDate == 'del' %}
+                                            <input type="radio" value="del"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="del"  class="" name="optionDate">
+                                        {% endif %}
+                                        Del
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <fieldset id="del" disabled="disabled">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <select class="form-control" name="dateFormat">
+                                                {% for dt in dateFormats %}
+                                                    {% if requestQuery.dateFormat and dt.key == requestQuery.dateFormat %}
+                                                        <option label="{{ dt.value }}" value="{{ dt.key }}" selected="selected">{{ dt.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ dt.value }}" value="{{ dt.key }}">{{ dt.value }}</option>
+                                                    {% endif %}
+
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="radio">
+                                    <label>
+                                        {% if requestQuery.optionDate == 'month' %}
+                                            <input type="radio" value="month"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="month"  class="" name="optionDate">
+                                        {% endif %}
+                                        Por mes
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <fieldset id="month"  disabled="disabled">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <select class="form-control" name="dateFormatMonth">
+                                                {% for dtm in dateFormatMonths %}
+                                                    {% if requestQuery.dateFormatMonth and dtm.key == requestQuery.dateFormatMonth %}
+                                                        <option label="{{ dtm.value }}" value="{{ dtm.key }}" selected="selected">{{ dtm.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ dtm.value }}" value="{{ dtm.key }}">{{ dtm.value }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                             <select class="form-control" name="dateFormatYear">
+                                                 {% for dty in dateFormatYears %}
+                                                     {% if requestQuery.dateFormatYear and dty.key == requestQuery.dateFormatYear %}
+                                                         <option label="{{ dty.value }}" value="{{ dty.key }}" selected="selected">{{ dty.value }}</option>
+                                                     {% else %}
+                                                         <option label="{{ dty.value }}" value="{{ dty.key }}">{{ dty.value }}</option>
+                                                     {% endif %}
+                                                 {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="radio">
+                                    <label>
+                                        {% if requestQuery.optionDate == 'between' %}
+                                            <input type="radio" value="between"  class="" name="optionDate" checked="checked">
+                                        {% else  %}
+                                            <input type="radio" value="between"  class="" name="optionDate">
+                                        {% endif %}
+                                        Por rango
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <fieldset id="between" disabled="disabled">
+                                    <style>
+                                      .full button span {
+                                        background-color: limegreen;
+                                        border-radius: 32px;
+                                        color: black;
+                                      }
+                                      .partially button span {
+                                        background-color: orange;
+                                        border-radius: 32px;
+                                        color: black;
+                                      }
+                                    </style>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            Desde
+                                            <p class="input-group">
+                                                {% if requestQuery.dateFrom %}
+                                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom" value="{{ requestQuery.dateFrom }}" required="required">
+                                                {% else %}
+                                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom" required="required">
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            Hasta
+                                            <p class="input-group">
+                                                {% if requestQuery.dateTo %}
+                                                    <input type="date" class="form-control" name="dateTo" id="dateTo" value="{{ requestQuery.dateTo }}" required="required">
+                                                {% else %}
+                                                    <input type="date" class="form-control" name="dateTo" id="dateTo" required="required">
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+        <div class="bs-callout bs-callout-info" id="filteruser">
+        <div class="page-header text-right">
+            <h4>Filtrar por usuario <small></small></h4>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <div class="radio">
+                                    <label class="inline">Filtrar por usuarios: &nbsp; &nbsp;</label>
+                                    <label class="inline">
+                                        {% if requestQuery.optionUser == '1' %}
+                                            <input type="radio" value="1"  class="" name="optionUser" checked="checked">SI
+
+                                        {% else  %}
+                                            <input type="radio" value="1"  class="" name="optionUser">SI
+                                        {% endif %}
+                                    </label>
+                                    <label class="inline">
+                                        {% if requestQuery.optionUser == '0' %}
+                                            <input type="radio" value="0"  class="" name="optionUser">NO
+                                        {% else  %}
+                                            <input type="radio" value="0"  class="" name="optionUser">NO
+                                        {% endif %}
+                                    </label>
+
+                                </div>
+                            </td>
+                            <td>
+                                <fieldset id="user">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <select multiple class="form-control" name="users" required="required">
+                                                {% for user in users %}
+                                                    {% if user.key|string in requestQuery.users %}
+                                                        <option label="{{ user.value }}" value="{{ user.key }}" selected="selected">{{ user.value }}</option>
+                                                    {% else %}
+                                                        <option label="{{ user.value }}" value="{{ user.key }}">{{ user.value }}</option>
+                                                    {% endif %}
+
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+
+
+
+    <button type="submit" class="btn btn-default">{{_('Consultar')}}</button>
+  </form>
+
+    {% if dateFrom and  dateTo %}
+        <p>&nbsp;</p>
+        <button type="button" onclick="openPrint(this, '#print', 'SENAPI Centro Documental Digital DPI - Registros y resoluciones')" class="btn btn-default pull-right">{{_('Imprimir')}}</button>
+        <table id="print" class="table table-bordered"style="background-color: #FFFFFF">
+            <tbody>
+            <tr>
+                <td colspan="6"><strong>Documentos consultados</strong> <div class="pull-right"><strong>Desde: </strong><span>{{ dateFrom|string|formatdatetime }}</span> &nbsp;&nbsp;&nbsp; <strong>Hasta: </strong> <span>{{ dateTo|string|formatdatetime }}</span></div> </td>
+            </tr>
+            {% if results %}
+                <tr>
+                    <th>N°</th>
+                    <th>Usuario</th>
+                    <th>N°</th>
+                    <th width="40%">Documento</th>
+                    <th width="30%">Fecha</th>
+                    <th width="30%">Hora</th>
+                </tr>
+                {% for row in results %}
+                    <tr id="{{ row.default.nickname }}">
+                        <td >{{ loop.index }}</td>
+                        <td ><h4>{{ row.default.nickname }}</h4>
+                        </td>
+                        <td colspan="4" style="padding:0">
+                            {% if row['items'] %}
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <tbody>
+                                {% for row2 in row['items'] %}
+                                    <tr>
+                                        <td width="4%">{{ loop.index }}</td>
+                                        <td width="40%"><a href="{{ url_for('web.show_book', book_id=row2.book.id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">{{row2.book.title}}</a></td>
+                                        <td width="28%">{{ row2.item.datetime|formatdate }}</td>
+                                        <td width="28%">{{ row2.item.time_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                                    <tr>
+                                        <td colspan="4">
+                                            <p class="text-center">
+                                            <strong>{{ row['items']|length }}</strong>
+                                            {% if row['items']|length > 1 %}
+                                                documentos consultados
+                                            {% else %}
+                                                documento consultado
+                                            {% endif %}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                <tbody>
+                            </table>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if loop.last %}
+                    <tr>
+                        <td colspan="6">
+                        <p class="text-center">
+                            {% if row.count > 1 %}
+                            Total <strong>{{ row.count }}</strong> documentos consultados
+                            {% else %}
+                                Total <strong>{{ row.count }}</strong> documento consultado
+                            {% endif %}
+                        </p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center"><span>No se encontraron resultados</span></td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  var language = '{{ g.user.locale }}';
+</script>
+
+<script src="{{ url_for('static', filename='js/libs/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+{% if not g.user.locale == 'en' %}
+<script src="{{ url_for('static', filename='js/libs/bootstrap-datepicker/locales/bootstrap-datepicker.' + g.user.locale + '.min.js') }}" charset="UTF-8"></script>
+{% endif %}
+<script src="{{ url_for('static', filename='js/libs/typeahead.bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/edit_books.js') }}"></script>
+<script>
+</script>
+{% endblock %}
+{% block header %}
+<link href="{{ url_for('static', filename='css/libs/typeahead.css') }}" rel="stylesheet" media="screen">
+<link href="{{ url_for('static', filename='css/libs/bootstrap-datepicker3.min.css') }}" rel="stylesheet" media="screen">
+{% endblock %}

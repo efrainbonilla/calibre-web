@@ -25,6 +25,7 @@ from __future__ import division, print_function, unicode_literals
 import os
 import base64
 import datetime
+import calendar
 import json
 import mimetypes
 import traceback
@@ -320,6 +321,381 @@ def toggle_read(book_id):
             log.error(u"Custom Column No.%d is not exisiting in calibre database", config.config_read_column)
     return ""
 
+@login_required
+def search_book(criteria, criteria_book):
+    searchbook = ub.session.query(ub.SearchBook).filter(ub.and_(ub.SearchBook.user_id == int(current_user.id),
+                                                                   ub.SearchBook.criteria == criteria,
+                                                                   ub.SearchBook.date_at == datetime.datetime.now().date()
+                                                                )).first()
+
+    if searchbook:
+        searchbook.time_at = datetime.datetime.now().time()
+    else:
+        searchBook = ub.SearchBook()
+        searchBook.user_id = int(current_user.id)
+        searchBook.criteria = criteria
+        searchBook.criteria_book = criteria_book
+        searchBook.date_at = datetime.datetime.now().date()
+        searchBook.time_at = datetime.datetime.now().time()
+        searchbook = searchBook
+    ub.session.merge(searchbook)
+    ub.session.commit()
+    return ""
+
+
+@web.route("/ajax/viewbook/<int:book_id>", methods=['POST'])
+@login_required
+def view_book(book_id):
+    book = ub.session.query(ub.ViewBook).filter(ub.and_(ub.ViewBook.user_id == int(current_user.id),
+                                                                   ub.ViewBook.book_id == book_id,
+                                                                   ub.ViewBook.date_at == datetime.datetime.now().date()
+                                                                )).first()
+
+    if book:
+        book.time_at = datetime.datetime.now().time()
+    else:
+        viewBook = ub.ViewBook()
+        viewBook.user_id = int(current_user.id)
+        viewBook.book_id = book_id
+        viewBook.date_at = datetime.datetime.now().date()
+        viewBook.time_at = datetime.datetime.now().time()
+        book = viewBook
+    ub.session.merge(book)
+    ub.session.commit()
+    return ""
+
+
+@web.route("/reports")
+@login_required
+def reports():
+    reports = [
+        {'key': 'docquery', 'value': 'Documentos consultados'}
+    ]
+
+    dateFormats = [
+        {'key': 'day', 'value': 'Dia'},
+        {'key': 'dayBefore', 'value': 'Dia Anterior'},
+        {'key': 'week', 'value': 'Semana'},
+        {'key': 'weekBefore', 'value': 'Semana Anterior'},
+        {'key': 'month', 'value': 'Mes'},
+        {'key': 'monthBefore', 'value': 'Mes Anterior'}
+    ]
+
+    dateFormatsKeys = []
+    for x in dateFormats:
+        dateFormatsKeys.append(x.get('key'))
+
+    dateFormatMonths = [
+        {'key': 'January', 'value': 'Enero'},
+        {'key': 'February', 'value': 'Febrero'},
+        {'key': 'March', 'value': 'Marzo'},
+        {'key': 'April', 'value': 'Abril'},
+        {'key': 'May', 'value': 'Mayo'},
+        {'key': 'June', 'value': 'Junio'},
+        {'key': 'July', 'value': 'Julio'},
+        {'key': 'August', 'value': 'Agosto'},
+        {'key': 'September', 'value': 'Septiembre'},
+        {'key': 'October', 'value': 'Octubre'},
+        {'key': 'November', 'value': 'Noviembre'},
+        {'key': 'December', 'value': 'Diciembre'}
+    ]
+
+    dateFormatMonthsKeys = []
+    for x in dateFormatMonths:
+        dateFormatMonthsKeys.append(x.get('key'))
+
+    dateFormatYears = []
+    now = datetime.datetime.today().strftime("%Y")
+    for y in range(2017, int(datetime.datetime.today().strftime("%Y")) + 1):
+        dateFormatYears.append({'key': y, 'value': y})
+
+    dateFormatYearsKeys = []
+    for x in dateFormatYears:
+        dateFormatYearsKeys.append(x.get('key'))
+
+    users = ub.session.connection().execute("""SELECT u.id AS key, u.nickname AS value FROM user u""").fetchall()
+
+    results = []
+
+    if request.method == 'GET':
+        report = request.args.get("report")
+        optionDate = request.args.get("optionDate")
+
+        dateFrom = dateTo = None
+
+        requestQuery = {
+            'report': None,
+            'optionDate': None,
+            'dateFrom': None,
+            'dateTo': None,
+            'dateFormat': None,
+            'dateFormatMonth': None,
+            'dateFormatYear': None,
+
+            'optionUser': None,
+            'users': []
+        }
+
+        if report:
+            requestQuery['report'] = report
+            report = report.strip().lower()
+
+        if optionDate == 'between' and request.args.get("dateFrom") and request.args.get("dateTo"):
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFrom'] = request.args.get("dateFrom")
+            requestQuery['dateTo'] = request.args.get("dateTo")
+
+            year, month, day = request.args.get("dateFrom").split('-')
+            dateFrom = datetime.date(int(year), int(month), int(day))
+            year, month, day = request.args.get("dateTo").split('-')
+            dateTo = datetime.date(int(year), int(month), int(day))
+
+        elif optionDate == 'del' and request.args.get("dateFormat") in dateFormatsKeys:
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFormat'] = request.args.get("dateFormat")
+
+            dateFormat = request.args.get("dateFormat")
+            now = datetime.datetime.today()
+
+            if dateFormat == 'day':
+                dateFrom = now
+                dateTo = now
+
+            if dateFormat == 'dayBefore':
+                dateFrom = now - datetime.timedelta(days=1)
+                dateTo = dateFrom
+
+            if dateFormat == 'week':
+                dateFrom = now - datetime.timedelta(days=now.weekday())
+                dateTo = dateFrom + datetime.timedelta(days=6)
+
+            if dateFormat == 'weekBefore':
+                dateFrom = now - datetime.timedelta(days=now.weekday()+7)
+                dateTo = dateFrom + datetime.timedelta(days=6)
+
+
+            if dateFormat == 'month':
+                dateFrom = now.replace(day=1)
+                dateTo = now.replace(day=calendar.monthrange(now.year, now.month)[1])
+
+            if dateFormat == 'monthBefore':
+                if now.month == 1:
+                    year = now.year - 1
+                    month = 12
+                else:
+                    year = now.year
+                    month = now.month - 1
+
+                day=calendar.monthrange(year, month)[1]
+                dateMonthBefore = datetime.date(year, month, day)
+
+                dateFrom = dateMonthBefore.replace(day=1)
+                dateTo = dateMonthBefore.replace(day=day)
+
+            if dateFormat == 'all':
+                dateFrom = None
+                dateTo = now
+
+        elif optionDate == 'month' and (request.args.get("dateFormatMonth") in dateFormatMonthsKeys) and (request.args.get("dateFormatYear") in dateFormatYearsKeys):
+            requestQuery['optionDate'] = optionDate
+            requestQuery['dateFormatMonth'] = request.args.get("dateFormatMonth")
+            requestQuery['dateFormatYear'] = request.args.get("dateFormatYear")
+
+            year = int(request.args.get("dateFormatYear"))
+            month = request.args.get("dateFormatMonth")
+            month = dateFormatMonthsKeys.index(month) + 1
+            day = calendar.monthrange(year, month)[1]
+            dateMonth = datetime.date(year, month, day)
+
+            dateFrom = dateMonth.replace(day=1)
+            dateTo = dateMonth.replace(day=day)
+
+        if dateFrom and dateTo:
+            dateFrom = datetime.datetime(dateFrom.year, dateFrom.month, dateFrom.day, hour=0, minute=0, second=0)
+            dateTo = datetime.datetime(dateTo.year, dateTo.month, dateTo.day, hour=23, minute=59, second=59)
+
+            date_from = dateFrom.strftime("%Y-%m-%d")
+            date_to = dateTo.strftime("%Y-%m-%d")
+
+            conn = ub.session.connection()
+            conn2 = db.session.connection()
+
+            #users
+            optionUser = request.args.get("optionUser")
+            if optionUser == '1':
+                requestQuery['optionUser'] = optionUser
+                _users = request.args.getlist("users")
+                requestQuery['users'] = _users
+                ids = ",".join(_users)
+                result = conn.execute("""SELECT v.user_id, u.nickname,   
+                                                    group_concat(v.id) AS ids
+                                                    FROM book_view_link v
+                                                    INNER JOIN user u ON v.user_id = u.id 
+                                                    WHERE v.date_at BETWEEN :date_from AND  :date_to
+                                                    AND v.user_id IN("""+ ids +""") 
+                                                    GROUP BY v.user_id """,
+                                      date_from,
+                                      date_to).fetchall()
+            elif optionUser == '0':
+                requestQuery['optionUser'] = optionUser
+
+                result = conn.execute("""SELECT v.user_id, u.nickname,   
+                                    group_concat(v.id) AS ids
+                                    FROM book_view_link v
+                                    INNER JOIN user u ON v.user_id = u.id 
+                                    WHERE v.date_at BETWEEN :date_from AND  :date_to GROUP BY v.user_id """, date_from,
+                                  date_to).fetchall()
+            count = 0
+            results = []
+            for row in result:
+                ids = row[2]
+                result2 = conn.execute("""SELECT book_id, date_at, TIME(time_at) AS time_at, printf(DATE(date_at) || ' ' || TIME(time_at)) AS datetime
+                                      FROM book_view_link 
+                                      WHERE id IN ( """ + ids +""" ) 
+                                      ORDER BY date_at ASC, time_at ASC """).fetchall()
+
+                results2 = []
+                for row2 in result2:
+                    book = row2[0]
+                    count = count  + 1
+                    results2.append({
+                        'item': dict(row2),
+                        'book': conn2.execute("""SELECT * FROM books WHERE id =:book""", book).fetchall()[0]
+                    })
+
+
+                results.append({
+                    'default': dict(row),
+                    'items': results2,
+                    'count': count
+                })
+
+    return render_title_template('reports_form.html',
+                                 dateFrom=dateFrom,
+                                 dateTo=dateTo,
+                                 requestQuery=requestQuery,
+                                 results=results,
+                                 reports=reports,
+                                 users=users,
+                                 dateFormats=dateFormats,
+                                 dateFormatMonths=dateFormatMonths,
+                                 dateFormatYears=dateFormatYears,
+                                 title=_(u"Reportes"))
+
+
+@web.route("/statistics")
+@login_required
+def statistics():
+    counter = len(db.session.query(db.Books).all())
+    authors = len(db.session.query(db.Authors).all())
+    categorys = len(db.session.query(db.Tags).all())
+    series = len(db.session.query(db.Series).all())
+    views = len(ub.session.query(ub.ViewBook.id).all())
+
+    users = ub.session.query(ub.User.id.label('id'),
+                             ub.User.nickname.label('nickname'),
+                             func.count(ub.ViewBook.book_id).label('total')).\
+                            select_from(ub.ViewBook).\
+                            join(ub.User).group_by(ub.ViewBook.user_id).all()
+
+    bookscounter = ub.session.query(
+                            ub.ViewBook.book_id.label('book_id'),
+                            func.count(ub.ViewBook.book_id).label('total')). \
+                            select_from(ub.ViewBook). \
+                            group_by(ub.ViewBook.book_id).all()
+
+    books = []
+    for entry in bookscounter:
+        book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(db.Books.id == entry.book_id).first()
+        books.append(book)
+
+    return render_title_template('statistics.html', bookcounter=counter, authorcounter=authors,
+                                 categorycounter=categorys, seriecounter=series,
+                                 viewcounter=views,
+                                 users=users,
+                                 bookscounter=bookscounter, books=books,
+                                 title=_(u"Statistics"))
+
+
+@web.route("/statistics/users/<int:user_id>")
+@login_required_if_no_ano
+def statistics_user(user_id):
+    conn = ub.session.connection()
+    result = conn.execute("""SELECT
+                          book_view_link.id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                          group_concat(DATE(book_view_link.date_at) || ' ' || TIME(book_view_link.time_at)) AS datetime_concat
+                        FROM book_view_link JOIN (
+                          SELECT book_view_link.id AS id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                            DATE(book_view_link.date_at) AS date_at,
+                            TIME(book_view_link.time_at) AS time_at
+                        FROM book_view_link
+                        WHERE book_view_link.user_id = :user_id
+                        ORDER BY book_view_link.date_at DESC, book_view_link.time_at DESC
+                        ) AS subquery ON (subquery.id = book_view_link.id)
+                        WHERE book_view_link.user_id = :user_id
+                        GROUP BY book_view_link.book_id""", user_id).fetchall()
+
+    books = []
+    items = []
+    for row in result:
+        items.append(dict(row))
+        book = db.session.query(db.Books.title.label('title')).filter(db.Books.id == row[1]).first()
+        books.append(book)
+
+    user = ub.session.query(ub.User.nickname.label('nickname')).select_from(ub.User).filter(
+        ub.User.id == user_id).first()
+
+    if user:
+        return render_title_template('statistics_user_detail.html',  books=books, is_xhr=request.is_xhr,
+                                     items=items,
+                                     title="<h3>%s</h3>" % user.nickname)
+    else:
+        flash(_(u"Error opening eBook. File does not exist or file is not accessible:"), category="error")
+        return redirect(url_for("index"))
+
+
+@web.route("/statistics/books/<int:book_id>")
+@login_required_if_no_ano
+def statistics_book(book_id):
+    conn = ub.session.connection()
+    result = conn.execute("""SELECT
+                          book_view_link.id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                          subquery.nickname,
+                          group_concat(DATE(book_view_link.date_at) || ' ' || TIME(book_view_link.time_at)) AS datetime_concat
+                        FROM book_view_link JOIN (
+                          SELECT book_view_link.id AS id,
+                          book_view_link.book_id AS book_id,
+                          book_view_link.user_id AS user_id,
+                            u.nickname AS nickname,
+                            DATE(book_view_link.date_at) AS date_at,
+                            TIME(book_view_link.time_at) AS time_at
+                        FROM book_view_link
+                        JOIN user u ON book_view_link.user_id = u.id
+                        WHERE book_view_link.book_id = :book_id
+                        ORDER BY book_view_link.date_at DESC, book_view_link.time_at DESC
+                        ) AS subquery ON (subquery.id = book_view_link.id)
+                        WHERE book_view_link.book_id = :book_id
+                        GROUP BY book_view_link.user_id""", book_id).fetchall()
+
+    items = []
+    for row in result:
+        items.append(dict(row))
+
+    book = db.session.query(db.Books.title.label('title')).filter(db.Books.id == book_id).first()
+
+    if items:
+        return render_title_template('statistics_book_detail.html', items=items, is_xhr=request.is_xhr,
+                                 title="<h3>%s</h3>" % book.title)
+    else:
+        flash(_(u"Error opening eBook. File does not exist or file is not accessible:"), category="error")
+        return redirect(url_for("index"))
+
 
 '''
 @web.route("/ajax/getcomic/<int:book_id>/<book_format>/<int:page>")
@@ -549,7 +925,6 @@ def render_hot_books(page):
         abort(404)
 
 
-
 def render_author_books(page, author_id, order):
     entries, __, pagination = fill_indexpage(page, db.Books, db.Books.authors.any(db.Authors.id == author_id),
                                              [order[0], db.Series.name, db.Books.series_index],
@@ -569,6 +944,7 @@ def render_author_books(page, author_id, order):
 
     return render_title_template('author.html', entries=entries, pagination=pagination, id=author_id,
                                  title=_(u"Author: %(name)s", name=author_name), author=author_info,
+                                 searchparams=[{'key': 'authors', 'value': author_id}],
                                  other_books=other_books, page="author")
 
 
@@ -591,6 +967,7 @@ def render_series_books(page, book_id, order):
         entries, random, pagination = fill_indexpage(page, db.Books, db.Books.series.any(db.Series.id == book_id),
                                                      [db.Books.series_index, order[0]])
         return render_title_template('index.html', random=random, pagination=pagination, entries=entries, id=book_id,
+                                     searchparams=[{'key': 'series', 'value': book_id}],
                                      title=_(u"Series: %(serie)s", serie=name.name), page="series")
     else:
         abort(404)
@@ -625,6 +1002,7 @@ def render_category_books(page, book_id, order):
                                                      [db.Series.name, db.Books.series_index, order[0]],
                                                      db.books_series_link, db.Series)
         return render_title_template('index.html', random=random, entries=entries, pagination=pagination, id=book_id,
+                                 searchparams=[{'key': 'tags', 'value': book_id}],
                                  title=_(u"Category: %(name)s", name=name.name), page="category")
     else:
         abort(404)
@@ -786,12 +1164,48 @@ def get_tasks_status():
 @login_required_if_no_ano
 def search():
     term = request.args.get("query").strip().lower()
+    try:
+        key = request.args.get("key")
+        value = request.args.get("value")
+    except NameError:
+        key = None
+        value = None
     if term:
-        entries = get_search_results(term)
-        ids = list()
-        for element in entries:
-            ids.append(element.id)
-        searched_ids[current_user.id] = ids
+        if key and value:
+            key = key.strip().lower()
+            value = value.strip()
+            entries = []
+            if key == 'tags':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.tags.any(db.Tags.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.tags.any(db.Tags.id == value))
+                ).filter(common_filters()).all()
+            if key == 'series':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.series.any(db.Series.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.series.any(db.Series.id == value))) \
+                    .filter(common_filters()).all()
+            if key == 'authors':
+                entries = db.session.query(db.Books).filter(
+                    db.or_(db.Books.authors.any(db.Authors.name.ilike("%" + term + "%")),
+                           db.Books.title.ilike("%" + term + "%")),
+                    db.and_(db.Books.authors.any(db.Authors.id == value))) \
+                    .filter(common_filters()).all()
+        else:
+            entries = get_search_results(term)
+            ids = list()
+            for element in entries:
+                ids.append(element.id)
+            searched_ids[current_user.id] = ids
+
+        if entries and len(str(term)) > 2:
+            book = []
+            for entry in entries:
+                book.append(str(entry.id))
+            search_book(term, ",".join(book))
+
         return render_title_template('search.html', searchterm=term, entries=entries, page="search")
     else:
         return render_title_template('search.html', searchterm="", page="search")
@@ -919,6 +1333,13 @@ def advanced_search():
                     q = q.filter(getattr(db.Books, 'custom_column_'+str(c.id)).any(
                         func.lower(db.cc_classes[c.id].value).ilike("%" + custom_query + "%")))
         q = q.all()
+
+        if q and len(str(searchterm)) > 2:
+            book = []
+            for entry in q:
+                book.append(str(entry.id))
+            search_book(searchterm, ",".join(book))
+
         ids = list()
         for element in q:
             ids.append(element.id)

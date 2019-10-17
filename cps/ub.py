@@ -32,6 +32,7 @@ try:
     oauth_support = True
 except ImportError:
     oauth_support = False
+from sqlalchemy import and_, or_, Date, Time
 from sqlalchemy import create_engine, exc, exists
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import String, Integer, SmallInteger, Boolean, DateTime
@@ -268,6 +269,23 @@ class ReadBook(Base):
     user_id = Column(Integer, ForeignKey('user.id'), unique=False)
     is_read = Column(Boolean, unique=False)
 
+class ViewBook(Base):
+    __tablename__ = 'book_view_link'
+
+    id = Column(Integer, primary_key=True)
+    book_id = Column(Integer, unique=False)
+    user_id = Column(Integer, ForeignKey('user.id'), unique=False)
+    date_at = Column(Date)
+    time_at = Column(Time)
+class SearchBook(Base):
+    __tablename__ = 'book_search_link'
+
+    id = Column(Integer, primary_key=True)
+    criteria = Column(String)
+    criteria_book = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'), unique=False)
+    date_at = Column(Date)
+    time_at = Column(Time)
 
 class Bookmark(Base):
     __tablename__ = 'bookmark'
@@ -329,6 +347,10 @@ def migrate_Database(session):
         ReadBook.__table__.create(bind=engine)
     if not engine.dialect.has_table(engine.connect(), "bookmark"):
         Bookmark.__table__.create(bind=engine)
+    if not engine.dialect.has_table(engine.connect(), "book_view_link"):
+        ViewBook.__table__.create(bind=engine)
+    if not engine.dialect.has_table(engine.connect(), "book_search_link"):
+        SearchBook.__table__.create(bind=engine)
     if not engine.dialect.has_table(engine.connect(), "registration"):
         ReadBook.__table__.create(bind=engine)
         conn = engine.connect()

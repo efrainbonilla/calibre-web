@@ -23,6 +23,7 @@ import os
 import re
 import ast
 
+from sqlalchemy import and_, or_
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy import String, Integer, Boolean
