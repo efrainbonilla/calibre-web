@@ -52,7 +52,7 @@
 </div>
 {% endif %}
 <div class="discover load-more">
-  <h2 class="{{title}}">{{_(title)}}</h2>
+  <h2 class="{{title}}">{{_(title)}} {% include 'search-custom.html' %}</h2>
     <div class="filterheader hidden-xs hidden-sm">
       <a data-toggle="tooltip" id="new" class="btn btn-primary" href="{{url_for('web.books_list', data=page, book_id=id, sort='new')}}"><span class="glyphicon glyphicon-book"></span> <span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-sort-by-order"></span></a>
       <a id="old" class="btn btn-primary" href="{{url_for('web.books_list', data=page, book_id=id, sort='old')}}"><span class="glyphicon glyphicon-book"></span> <span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-sort-by-order-alt"></span></a>

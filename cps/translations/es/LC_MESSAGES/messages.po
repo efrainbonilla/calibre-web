@@ -6,18 +6,19 @@
 # Angel Docampo <angel@docampo.net>, 2019.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Calibre-Web\n"
+"Project-Id-Version: Calibre-Web\n"
 "Report-Msgid-Bugs-To: https://github.com/janeczku/Calibre-Web\n"
 "POT-Creation-Date: 2019-09-06 19:03+0200\n"
-"PO-Revision-Date: 2019-07-26 11:44+0100\n"
+"PO-Revision-Date: 2019-10-17 18:22-0400\n"
 "Last-Translator: minakmostoles <xxx@xxx.com>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: cps/about.py:40 cps/about.py:65 cps/about.py:66 cps/uploader.py:228
 msgid "installed"
@@ -249,7 +250,7 @@ msgstr "Metadatos actualizados correctamente"
 
 #: cps/editbooks.py:530
 msgid "Error editing book, please check logfile for details"
-msgstr "Error al editar el libro, por favor compruebe el fichero de registro (logfile) para tener más detalles"
+msgstr "Error al editar el documento, por favor compruebe el fichero de registro (logfile) para tener más detalles"
 
 #: cps/editbooks.py:580
 #, python-format
@@ -273,12 +274,12 @@ msgstr "Falta la fuente o el formato de destino para la conversión"
 #: cps/editbooks.py:705
 #, python-format
 msgid "Book successfully queued for converting to %(book_format)s"
-msgstr "Libro puesto a la cola con éxito para convertirlo a %(book_format)s"
+msgstr "Documento puesto a la cola con éxito para convertirlo a %(book_format)s"
 
 #: cps/editbooks.py:709
 #, python-format
 msgid "There was an error converting this book: %(res)s"
-msgstr "Ocurrió un error al convertir este libro: %(res)s"
+msgstr "Ocurrió un error al convertir este documento: %(res)s"
 
 #: cps/gdrive.py:61
 msgid "Google Drive setup not completed, try to deactivate and activate Google Drive again"
@@ -291,7 +292,7 @@ msgstr "El dominio de devolución de llamada no se ha verificado, siga los pasos
 #: cps/helper.py:79
 #, python-format
 msgid "%(format)s format not found for book id: %(book)d"
-msgstr "%(format)s formato no encontrado para el id del libro: %(book)d"
+msgstr "%(format)s formato no encontrado para el id del documento: %(book)d"
 
 #: cps/helper.py:91
 #, python-format
@@ -372,7 +373,7 @@ msgstr "Fichero %(file)s no encontrado en Google Drive"
 #: cps/helper.py:406
 #, python-format
 msgid "Book path %(path)s not found on Google Drive"
-msgstr "La ruta %(path)s del libro no fue encontrada en Google Drive"
+msgstr "La ruta %(path)s del documento no fue encontrada en Google Drive"
 
 #: cps/helper.py:623
 msgid "Waiting"
@@ -461,7 +462,7 @@ msgstr "Estante especificado inválido"
 #: cps/shelf.py:53
 #, python-format
 msgid "Sorry you are not allowed to add a book to the the shelf: %(shelfname)s"
-msgstr "Lo sentimos, no tiene permisos para agregar un libro al estante: %(shelfname)s"
+msgstr "Lo sentimos, no tiene permisos para agregar un documento al estante: %(shelfname)s"
 
 #: cps/shelf.py:61
 msgid "You are not allowed to edit public shelves"
@@ -470,17 +471,17 @@ msgstr "No puede editar estanterías públicas."
 #: cps/shelf.py:70
 #, python-format
 msgid "Book is already part of the shelf: %(shelfname)s"
-msgstr "El libro ya forma parte del estante: %(shelfname)s"
+msgstr "El documento ya forma parte del estante: %(shelfname)s"
 
 #: cps/shelf.py:84
 #, python-format
 msgid "Book has been added to shelf: %(sname)s"
-msgstr "El libro fue agregado a el estante: %(sname)s"
+msgstr "El documento fue agregado a el estante: %(sname)s"
 
 #: cps/shelf.py:103
 #, python-format
 msgid "You are not allowed to add a book to the the shelf: %(name)s"
-msgstr "No tiene permiso para añadir un libro a el estante: %(name)s"
+msgstr "No tiene permiso para añadir un documento a el estante: %(name)s"
 
 #: cps/shelf.py:108
 msgid "User is not allowed to edit public shelves"
@@ -489,27 +490,27 @@ msgstr "El usuario no tiene permiso para editar estantes públicos"
 #: cps/shelf.py:126
 #, python-format
 msgid "Books are already part of the shelf: %(name)s"
-msgstr "Los libros ya forman parte del estante: %(name)s"
+msgstr "Los documentos ya forman parte del estante: %(name)s"
 
 #: cps/shelf.py:140
 #, python-format
 msgid "Books have been added to shelf: %(sname)s"
-msgstr "Los libros han sido añadidos al estante: %(sname)s"
+msgstr "Los documentos han sido añadidos al estante: %(sname)s"
 
 #: cps/shelf.py:142
 #, python-format
 msgid "Could not add books to shelf: %(sname)s"
-msgstr "No se pudieron agregar libros al estante: %(sname)s"
+msgstr "No se pudieron agregar documentos al estante: %(sname)s"
 
 #: cps/shelf.py:179
 #, python-format
 msgid "Book has been removed from shelf: %(sname)s"
-msgstr "El libro fue eliminado del estante: %(sname)s"
+msgstr "El documento fue eliminado del estante: %(sname)s"
 
 #: cps/shelf.py:185
 #, python-format
 msgid "Sorry you are not allowed to remove a book from this shelf: %(sname)s"
-msgstr "Lo siento, no tiene permiso para eliminar un libro del estante: %(sname)s"
+msgstr "Lo siento, no tiene permiso para eliminar un documento del estante: %(sname)s"
 
 #: cps/shelf.py:206 cps/shelf.py:230
 #, python-format
@@ -558,28 +559,28 @@ msgstr "Añadido recientemente"
 
 #: cps/ub.py:59
 msgid "Show recent books"
-msgstr "Mostrar libros recientes"
+msgstr "Mostrar documentos recientes"
 
 #: cps/templates/index.xml:17 cps/ub.py:60
 msgid "Hot Books"
-msgstr "Libros populares"
+msgstr "Documentos populares"
 
 #: cps/ub.py:61
 msgid "Show hot books"
-msgstr "Mostrar libros populares"
+msgstr "Mostrar documentos populares"
 
 #: cps/templates/index.xml:24 cps/ub.py:64
 msgid "Best rated Books"
-msgstr "Libros mejor valorados"
+msgstr "Documentos mejor valorados"
 
 #: cps/ub.py:66
 msgid "Show best rated books"
-msgstr "Mostrar libros mejor valorados"
+msgstr "Mostrar documentos mejor valorados"
 
 #: cps/templates/index.xml:46 cps/templates/index.xml:50 cps/ub.py:67
 #: cps/web.py:971
 msgid "Read Books"
-msgstr "Libros leídos"
+msgstr "Documentos leídos"
 
 #: cps/ub.py:69
 msgid "Show read and unread"
@@ -588,7 +589,7 @@ msgstr "Mostrar leídos y no leídos"
 #: cps/templates/index.xml:53 cps/templates/index.xml:57 cps/ub.py:71
 #: cps/web.py:975
 msgid "Unread Books"
-msgstr "Libros no leídos"
+msgstr "Documentos no leídos"
 
 #: cps/ub.py:73
 msgid "Show unread"
@@ -600,24 +601,24 @@ msgstr "Descubrir"
 
 #: cps/ub.py:76
 msgid "Show random books"
-msgstr "Mostrar libros al azar"
+msgstr "Mostrar documentos al azar"
 
 #: cps/ub.py:77
 msgid "Categories"
-msgstr "Categorías"
+msgstr "Gestiones documentales DPI"
 
 #: cps/ub.py:79
 msgid "Show category selection"
-msgstr "Mostrar selección de categorías"
+msgstr "Mostrar selección de Gestiones documentales"
 
 #: cps/templates/book_edit.html:71 cps/templates/search_form.html:53
 #: cps/ub.py:80
 msgid "Series"
-msgstr "Series"
+msgstr "Gestión documental DPI"
 
 #: cps/ub.py:82
 msgid "Show series selection"
-msgstr "Mostrar selección de series"
+msgstr "Mostrar selección de Series documentales"
 
 #: cps/templates/index.xml:61 cps/ub.py:83
 msgid "Authors"
@@ -690,23 +691,23 @@ msgstr "Haz clic en el botón de abajo para actualizar a la última versión est
 
 #: cps/web.py:460
 msgid "Recently Added Books"
-msgstr "Libros añadidos recientemente"
+msgstr "Documentos añadidos recientemente"
 
 #: cps/web.py:488
 msgid "Best rated books"
-msgstr "Libros mejor valorados"
+msgstr "Documentos mejor valorados"
 
 #: cps/templates/index.xml:38 cps/web.py:496
 msgid "Random Books"
-msgstr "Libros al azar"
+msgstr "Documentos al azar"
 
 #: cps/web.py:522
 msgid "Books"
-msgstr "Libros"
+msgstr "Documentos"
 
 #: cps/web.py:549
 msgid "Hot Books (most downloaded)"
-msgstr "Libros populares (los más descargados)"
+msgstr "Documentos populares (los más descargados)"
 
 #: cps/web.py:560 cps/web.py:1300 cps/web.py:1388
 msgid "Error opening eBook. File does not exist or file is not accessible:"
@@ -725,7 +726,7 @@ msgstr "Editor/es: "
 #: cps/web.py:596
 #, python-format
 msgid "Series: %(serie)s"
-msgstr "Series: %(serie)s"
+msgstr "Series documentales: %(serie)s"
 
 #: cps/web.py:607
 #, python-format
@@ -740,7 +741,7 @@ msgstr "Formato del fichero: %(format)s"
 #: cps/web.py:630
 #, python-format
 msgid "Category: %(name)s"
-msgstr "Categoría : %(name)s"
+msgstr "Gestión documental : %(name)s"
 
 #: cps/web.py:647
 #, python-format
@@ -753,7 +754,7 @@ msgstr "Lista de editores"
 
 #: cps/templates/index.xml:82 cps/web.py:695
 msgid "Series list"
-msgstr "Lista de series"
+msgstr "Lista de series documentales"
 
 #: cps/web.py:709
 msgid "Ratings list"
@@ -769,7 +770,7 @@ msgstr "Idiomas disponibles"
 
 #: cps/templates/index.xml:75 cps/web.py:767
 msgid "Category list"
-msgstr "Lista de categorías"
+msgstr "Lista de Gestiones documentales"
 
 #: cps/templates/layout.html:73 cps/web.py:781
 msgid "Tasks"
@@ -804,12 +805,12 @@ msgstr "Configura primero los parámetros del servidor SMTP..."
 #: cps/web.py:1027
 #, python-format
 msgid "Book successfully queued for sending to %(kindlemail)s"
-msgstr "Libro puesto en la cola de envío a %(kindlemail)s"
+msgstr "Documento puesto en la cola de envío a %(kindlemail)s"
 
 #: cps/web.py:1031
 #, python-format
 msgid "There was an error sending this book: %(res)s"
-msgstr "Ha sucedido un error en el envío del libro: %(res)s"
+msgstr "Ha sucedido un error en el envío del documento: %(res)s"
 
 #: cps/web.py:1051 cps/web.py:1076 cps/web.py:1080 cps/web.py:1085
 #: cps/web.py:1089
@@ -878,7 +879,7 @@ msgstr "Perfil actualizado"
 #: cps/web.py:1310 cps/web.py:1312 cps/web.py:1314 cps/web.py:1320
 #: cps/web.py:1324
 msgid "Read a Book"
-msgstr "Leer un libro"
+msgstr "Leer un documento"
 
 #: cps/web.py:1334
 msgid "Error opening eBook. File does not exist or file is not accessible."
@@ -926,7 +927,7 @@ msgstr "Descargar"
 
 #: cps/templates/admin.html:15
 msgid "View Ebooks"
-msgstr "Ver libros electrónicos"
+msgstr "Ver documentos electrónicos"
 
 #: cps/templates/admin.html:16 cps/templates/layout.html:65
 msgid "Upload"
@@ -982,7 +983,7 @@ msgstr "Puerto"
 
 #: cps/templates/admin.html:81 cps/templates/config_view_edit.html:23
 msgid "Books per page"
-msgstr "Libros por página"
+msgstr "Documentos por página"
 
 #: cps/templates/admin.html:85
 msgid "Uploading"
@@ -1097,7 +1098,7 @@ msgstr "Más de"
 
 #: cps/templates/book_edit.html:12
 msgid "Delete Book"
-msgstr "Borrar libro"
+msgstr "Borrar documento"
 
 #: cps/templates/book_edit.html:15
 msgid "Delete formats:"
@@ -1110,7 +1111,7 @@ msgstr "Borrar"
 
 #: cps/templates/book_edit.html:26
 msgid "Convert book format:"
-msgstr "Convertir formato de libro:"
+msgstr "Convertir formato de documento:"
 
 #: cps/templates/book_edit.html:30
 msgid "Convert from:"
@@ -1126,11 +1127,11 @@ msgstr "Convertir a:"
 
 #: cps/templates/book_edit.html:46
 msgid "Convert book"
-msgstr "Convertir libro"
+msgstr "Convertir documento"
 
 #: cps/templates/book_edit.html:55 cps/templates/search_form.html:6
 msgid "Book Title"
-msgstr "Título del libro"
+msgstr "Título del documento"
 
 #: cps/templates/book_edit.html:59 cps/templates/book_edit.html:255
 #: cps/templates/book_edit.html:273 cps/templates/search_form.html:10
@@ -1148,7 +1149,7 @@ msgstr "Etiquetas"
 
 #: cps/templates/book_edit.html:75
 msgid "Series id"
-msgstr "Id de las series"
+msgstr "Id de las series documentales"
 
 #: cps/templates/book_edit.html:79
 msgid "Rating"
@@ -1190,7 +1191,7 @@ msgstr "Subir formato"
 
 #: cps/templates/book_edit.html:169
 msgid "view book after edit"
-msgstr "ver libro tras la edición"
+msgstr "ver documento tras la edición"
 
 #: cps/templates/book_edit.html:172 cps/templates/book_edit.html:208
 msgid "Get metadata"
@@ -1209,7 +1210,7 @@ msgstr "¿Estás realmente seguro?"
 
 #: cps/templates/book_edit.html:190
 msgid "Book will be deleted from Calibre database"
-msgstr "El libro será eliminado de la base de datos de Calibre"
+msgstr "El documento será eliminado de la base de datos de Calibre"
 
 #: cps/templates/book_edit.html:191
 msgid "and from hard disk"
@@ -1477,7 +1478,7 @@ msgstr "Utilizar Kindlegen"
 
 #: cps/templates/config_edit.html:294
 msgid "Use calibre's ebook converter"
-msgstr "Utilizar el convertidor de libros de Calibre"
+msgstr "Utilizar el convertidor de documentos de Calibre"
 
 #: cps/templates/config_edit.html:298
 msgid "E-Book converter settings"
@@ -1506,7 +1507,7 @@ msgstr "Título"
 
 #: cps/templates/config_view_edit.html:27
 msgid "No. of random books to show"
-msgstr "Número de libros aleatorios a mostrar"
+msgstr "Número de documentos aleatorios a mostrar"
 
 #: cps/templates/config_view_edit.html:31
 msgid "No. of authors to show before hiding (0=disable hiding)"
@@ -1554,7 +1555,7 @@ msgstr "Permitir descargas"
 
 #: cps/templates/config_view_edit.html:89 cps/templates/user_edit.html:96
 msgid "Allow book viewer"
-msgstr "Permitir visor de libros"
+msgstr "Permitir visor de documentos"
 
 #: cps/templates/config_view_edit.html:93 cps/templates/user_edit.html:100
 msgid "Allow Uploads"
@@ -1566,7 +1567,7 @@ msgstr "Permitir editar"
 
 #: cps/templates/config_view_edit.html:101 cps/templates/user_edit.html:108
 msgid "Allow Delete books"
-msgstr "Permitir eliminar libros"
+msgstr "Permitir eliminar documentos"
 
 #: cps/templates/config_view_edit.html:105 cps/templates/user_edit.html:113
 msgid "Allow Changing Password"
@@ -1582,7 +1583,7 @@ msgstr "Visibilidad predeterminada para nuevos usuarios"
 
 #: cps/templates/config_view_edit.html:135 cps/templates/user_edit.html:75
 msgid "Show random books in detail view"
-msgstr "Mostrar libros aleatorios con vista detallada"
+msgstr "Mostrar documentos aleatorios con vista detallada"
 
 #: cps/templates/config_view_edit.html:139 cps/templates/user_edit.html:88
 msgid "Show mature content"
@@ -1598,7 +1599,7 @@ msgstr "Escuchar en el navegador"
 
 #: cps/templates/detail.html:117
 msgid "Book"
-msgstr "Libro"
+msgstr "Documento"
 
 #: cps/templates/detail.html:117
 msgid "of"
@@ -1707,11 +1708,11 @@ msgstr "Volver al inicio"
 
 #: cps/templates/index.html:5
 msgid "Discover (Random Books)"
-msgstr "Descubrir (Libros al azar)"
+msgstr "Descubrir (Documentos al azar)"
 
 #: cps/templates/index.html:64
 msgid "Group by series"
-msgstr "Grupo por serie"
+msgstr "Grupo por serie documental"
 
 #: cps/templates/index.xml:6
 msgid "Start"
@@ -1727,31 +1728,31 @@ msgstr "Publicaciones populares del catálogo basados en la clasificación."
 
 #: cps/templates/index.xml:31
 msgid "New Books"
-msgstr "Libros nuevos"
+msgstr "Documentos nuevos"
 
 #: cps/templates/index.xml:35
 msgid "The latest Books"
-msgstr "Libros recientes"
+msgstr "Documentos recientes"
 
 #: cps/templates/index.xml:42
 msgid "Show Random Books"
-msgstr "Mostrar libros al azar"
+msgstr "Mostrar documentos al azar"
 
 #: cps/templates/index.xml:65
 msgid "Books ordered by Author"
-msgstr "Libros ordenados por autor"
+msgstr "Documentos ordenados por autor"
 
 #: cps/templates/index.xml:72
 msgid "Books ordered by publisher"
-msgstr "Libros ordenados por editor"
+msgstr "Documentos ordenados por editor"
 
 #: cps/templates/index.xml:79
 msgid "Books ordered by category"
-msgstr "Libros ordenados por categorías"
+msgstr "Documentos ordenados por gestiones documentales"
 
 #: cps/templates/index.xml:86
 msgid "Books ordered by series"
-msgstr "Libros ordenados por series"
+msgstr "Documentos ordenados por series documentales"
 
 #: cps/templates/index.xml:89 cps/templates/layout.html:132
 msgid "Public Shelves"
@@ -1759,7 +1760,7 @@ msgstr "Estantes públicos"
 
 #: cps/templates/index.xml:93
 msgid "Books organized in public shelfs, visible to everyone"
-msgstr "Libros organizados en estantes públicos, visibles para todo el mundo"
+msgstr "Documentos organizados en estantes públicos, visibles para todo el mundo"
 
 #: cps/templates/index.xml:97 cps/templates/layout.html:136
 msgid "Your Shelves"
@@ -1824,7 +1825,7 @@ msgstr "Previo"
 
 #: cps/templates/layout.html:183
 msgid "Book Details"
-msgstr "Detalles del libro"
+msgstr "Detalles del documento"
 
 #: cps/templates/layout.html:217
 msgid "Upload done, processing, please wait..."
@@ -2034,7 +2035,7 @@ msgstr "Excluir etiquetas"
 
 #: cps/templates/search_form.html:63
 msgid "Exclude Series"
-msgstr "Excluir series"
+msgstr "Excluir series documentales"
 
 #: cps/templates/search_form.html:84
 msgid "Exclude Languages"
@@ -2082,7 +2083,7 @@ msgstr "Estadísticas de la Biblioteca"
 
 #: cps/templates/stats.html:12
 msgid "Books in this Library"
-msgstr "Libros en esta biblioteca"
+msgstr "Documentos en esta biblioteca"
 
 #: cps/templates/stats.html:16
 msgid "Authors in this Library"
@@ -2090,11 +2091,11 @@ msgstr "Autores en esta biblioteca"
 
 #: cps/templates/stats.html:20
 msgid "Categories in this Library"
-msgstr "Categorías en esta biblioteca"
+msgstr "Gestiones documentales DPI en esta biblioteca"
 
 #: cps/templates/stats.html:24
 msgid "Series in this Library"
-msgstr "Series en esta biblioteca"
+msgstr "Series documentales en esta biblioteca"
 
 #: cps/templates/stats.html:28
 msgid "Linked libraries"
@@ -2154,7 +2155,7 @@ msgstr "Correo del Kindle"
 
 #: cps/templates/user_edit.html:40
 msgid "Show books with language"
-msgstr "Mostrar libros con idioma"
+msgstr "Mostrar documentos con idioma"
 
 #: cps/templates/user_edit.html:42
 msgid "Show all"
@@ -2179,238 +2180,3 @@ msgstr "Borrar este usuario"
 #: cps/templates/user_edit.html:139
 msgid "Recent Downloads"
 msgstr "Descargas recientes"
-
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "E-Mail: %(book)s"
-#~ msgstr "E-Mail: %(book)s"
-
-#~ msgid "Rename title from: '%(src)s' to '%(dest)s' failed with error: %(error)s"
-#~ msgstr "Renombre del título de: '%(src)s' a '%(dest)s' con error: %(error)s"
-
-#~ msgid "Rename author from: '%(src)s' to '%(dest)s' failed with error: %(error)s"
-#~ msgstr "Renombre del autor de: '%(src)s' a '%(dest)s' con error: %(error)s"
-
-#~ msgid "Password for user %(user)s reset"
-#~ msgstr "Contraseña para usuario %(user)s reseteada"
-
-#~ msgid "Password for user %s reset"
-#~ msgstr "Contraseña para usuario %s reseteada"
-
-#~ msgid "Rename title from: '%(src)s' to '%(src)s' failed with error: %(error)s"
-#~ msgstr "Renombre del titulo de: '%(src)s' a '%(dest)s' con error: %(error)s"
-
-#~ msgid "Rename author from: '%(src)s' to '%(src)s' failed with error: %(error)s"
-#~ msgstr "Renombre del autor de: '%(src)s' a '%(dest)s' con error: %(error)s"
-
-#~ msgid "Failed to create path for cover %(cover)s (Permission denied)."
-#~ msgstr "Error al crear la ruta para la cubierta %(cover)s (Permiso denegado)."
-
-#~ msgid "File extension '%s' is not allowed to be uploaded to this server"
-#~ msgstr "La extensión de archivo '%s' no se puede cargar a este servidor"
-
-#~ msgid "File extension \"%(ext)s\" is not allowed to be uploaded to this server"
-#~ msgstr "No se permite subir archivos con la extensión \"%(ext)s\" a este servidor"
-
-#~ msgid "Current commit timestamp"
-#~ msgstr "Marca temporal del commit actual"
-
-#~ msgid "Newest commit timestamp"
-#~ msgstr "Marca temporal del commit más reciente"
-
-#~ msgid "Choose a password"
-#~ msgstr "Escoger una contraseña"
-
-#~ msgid "Convert: %(book)s"
-#~ msgstr "Convertir: %(book)s"
-
-#~ msgid "Convert to %(format)s: %(book)s"
-#~ msgstr "Convertir a %(format)s: %(book)s"
-
-#~ msgid "Files are replaced"
-#~ msgstr "Ficheros sustituidos"
-
-#~ msgid "Server is stopped"
-#~ msgstr "El servidor está detenido"
-
-#~ msgid "Convertertool %(converter)s not found"
-#~ msgstr "Convertertool %(converter)s no encontrado"
-
-#~ msgid "Could not find any formats suitable for sending by e-mail"
-#~ msgstr "No se pudo encontrar ningún formato adecuado para enviar por correo electrónico."
-
-#~ msgid "Author list"
-#~ msgstr "Lista de autores"
-
-#~ msgid "File %(file)s uploaded"
-#~ msgstr "Fichero %(file)s subido"
-
-#~ msgid "Update done"
-#~ msgstr "Actualización realizada"
-
-#~ msgid "Stable (Automatic))"
-#~ msgstr "Estable (automático)"
-
-#~ msgid "Nightly (Automatic))"
-#~ msgstr "Todas las noches (automático)"
-
-#~ msgid "A new update is available. Click on the button below to update to version: "
-#~ msgstr "Una nueva actualización está disponible. Haga clic en el botón de abajo para actualizar a la versión:"
-
-#~ msgid "A new update is available. Click on the button below to update to version:  %(version)s"
-#~ msgstr "Una nueva actualización está disponible. Haga clic en el botón de abajo para actualizar a la versión:  %(version)s"
-
-#~ msgid "Failed to create path for cover %(path)s (Permission denied)."
-#~ msgstr "Error al crear la ruta para la cubierta% %(path)s (Permiso denegado)."
-
-#~ msgid "Failed to store cover-file %(cover)s."
-#~ msgstr "Error al almacenar el archivo de portada %(cover)s."
-
-#~ msgid "Cover-file is not a valid image file"
-#~ msgstr "El archivo de portada no es un archivo de imagen válido"
-
-#~ msgid "Cover is not a jpg file, can't save"
-#~ msgstr "La cubierta no es un archivo jpg, no se puede guardar"
-
-#~ msgid "Preparing document for printing..."
-#~ msgstr "Preparando documento para imprimir..."
-
-#~ msgid "Using your another device, visit"
-#~ msgstr "Utilizando tu otro dispositivo, visitar"
-
-#~ msgid "and log in"
-#~ msgstr "y iniciar sesión"
-
-#~ msgid "Using your another device, login and visit "
-#~ msgstr "Utilizando otro dispositivo, inicia sesión y visita "
-
-#~ msgid "Newest Books"
-#~ msgstr "Libros más nuevos"
-
-#~ msgid "Oldest Books"
-#~ msgstr "Libros más antiguos"
-
-#~ msgid "Books (A-Z)"
-#~ msgstr "Libros (A-Z)"
-
-#~ msgid "Books (Z-A)"
-#~ msgstr "Libros (Z-A)"
-
-#~ msgid "Error opening eBook. Fileformat is not supported."
-#~ msgstr "Error al abrir el eBook. Formato de archivo no es compatible."
-
-#~ msgid "File %(title)s"
-#~ msgstr "Fichero %(title)s"
-
-#~ msgid "Show sorted books"
-#~ msgstr "Mostrar libros ordenados"
-
-#~ msgid "Sorted Books"
-#~ msgstr "Libros ordenados"
-
-#~ msgid "Sort By"
-#~ msgstr "Ordenar por"
-
-#~ msgid "Newest"
-#~ msgstr "Más nuevos"
-
-#~ msgid "Oldest"
-#~ msgstr "Más antiguos"
-
-#~ msgid "Ascending"
-#~ msgstr "Ascendente"
-
-#~ msgid "Descending"
-#~ msgstr "Descendente"
-
-#~ msgid "PDF.js viewer"
-#~ msgstr "Visor PDF.js"
-
-#~ msgid "Please enter a LDAP provider and a DN"
-#~ msgstr "Por favor ingrese un proveedor LDAP y un DN."
-
-#~ msgid "successfully deleted shelf %(name)s"
-#~ msgstr "Estante %(name)s fue borrado correctamente"
-
-#~ msgid "LDAP Provider URL"
-#~ msgstr "URL del proveedor de LDAP"
-
-#~ msgid "Register with %s, "
-#~ msgstr "Registrar con %s,"
-
-#~ msgid "Import of optional Google Drive requirements missing"
-#~ msgstr "Falta la importación de requisitos opcionales de Google Drive"
-
-#~ msgid "client_secrets.json is missing or not readable"
-#~ msgstr "No se encuentra el fichero client_secrets.json o no se puede leer"
-
-#~ msgid "client_secrets.json is not configured for web application"
-#~ msgstr "client_secrets.json no está configurado para la aplicación web"
-
-#~ msgid "Keyfile location is not valid, please enter correct path"
-#~ msgstr "La ubicación del fichero clave (Keyfile) no es válida, por favor introduzca la ruta correcta"
-
-#~ msgid "Certfile location is not valid, please enter correct path"
-#~ msgstr "La ubicación del fichero de certificado (Certfile) no es válida, por favor introduzca la ruta correcta"
-
-#~ msgid "Please enter a LDAP provider, port, DN and user object identifier"
-#~ msgstr "Por favor introduzca el proveedor LDAP, puerto, DN y usuario identificador"
-
-#~ msgid "Please enter a LDAP service account and password"
-#~ msgstr "Por favor introduzca una cuenta LDAP y la contraseña"
-
-#~ msgid "Please enter Github oauth credentials"
-#~ msgstr "Por favor introduzca su autentificación oauth de Github"
-
-#~ msgid "Please enter Google oauth credentials"
-#~ msgstr "Por favor introduzca su autentificación oauth de Google"
-
-#~ msgid "Logfile location is not valid, please enter correct path"
-#~ msgstr "La ubicación del fichero de registro (Logfile) no es válida, por favor introduzca la ruta correcta"
-
-#~ msgid "Access Logfile location is not valid, please enter correct path"
-#~ msgstr "No se puede acceder al fichero de log, por favor revise la ruta"
-
-#~ msgid "DB location is not valid, please enter correct path"
-#~ msgstr "Localización de la BD inválida, por favor introduzca la ruta correcta"
-
-#~ msgid "Excecution permissions missing"
-#~ msgstr "Permisos de ejecución ausentes"
-
-#~ msgid "not configured"
-#~ msgstr "no configurado"
-
-#~ msgid "Error excecuting UnRar"
-#~ msgstr "Error ejecutando UnRar"
-
-#~ msgid "Unrar binary file not found"
-#~ msgstr "Fichero binario Unrar no encontrado"
-
-#~ msgid "Use GitHub OAuth"
-#~ msgstr "Utilizar GitHub OAuth"
-
-#~ msgid "Use Google OAuth"
-#~ msgstr "Utilizar Google OAuth"
-
-#~ msgid "Obtain GitHub OAuth Credential"
-#~ msgstr "Obtener credenciales de GitHub OAuth"
-
-#~ msgid "GitHub OAuth Client Id"
-#~ msgstr "ID de cliente GitHub OAuth"
-
-#~ msgid "GitHub OAuth Client Secret"
-#~ msgstr "Cliente Secreto de GitHub OAuth"
-
-#~ msgid "Obtain Google OAuth Credential"
-#~ msgstr "Obtener credenciales de Google OAuth"
-
-#~ msgid "Google OAuth Client Id"
-#~ msgstr "ID de cliente Google OAuth"
-
-#~ msgid "Google OAuth Client Secret"
-#~ msgstr "Cliente Secreto de GitHub OAuth"
-
-#~ msgid "Use"
-#~ msgstr "Usar"
-

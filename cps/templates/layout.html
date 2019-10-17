@@ -16,6 +16,8 @@
     {% if g.current_theme == 1 %}
        <link href="{{ url_for('static', filename='css/caliBlur.min.css') }}" rel="stylesheet" media="screen">
     {% endif %}
+    <link href="{{ url_for('static', filename='custom/css/style.css') }}" rel="stylesheet" media="screen">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -129,18 +131,20 @@
               {% endfor %}
 
               {% if g.user.is_authenticated or g.allow_anonymous %}
-                <li class="nav-head hidden-xs public-shelves">{{_('Public Shelves')}}</li>
+                {#<li class="nav-head hidden-xs public-shelves">{{_('Public Shelves')}}</li>
                 {% for shelf in g.public_shelfes %}
                   <li><a href="{{url_for('shelf.show_shelf', shelf_id=shelf.id)}}"><span class="glyphicon glyphicon-list public_shelf"></span>{{shelf.name|shortentitle(40)}}</a></li>
-                {% endfor %}
+                {% endfor %}#}
                 <li class="nav-head hidden-xs your-shelves">{{_('Your Shelves')}}</li>
                 {% for shelf in g.user.shelf %}
                   <li><a href="{{url_for('shelf.show_shelf', shelf_id=shelf.id)}}"><span class="glyphicon glyphicon-list private_shelf"></span>{{shelf.name|shortentitle(40)}}</a></li>
                 {% endfor %}
-              {% if not g.user.is_anonymous %}
-                <li id="nav_createshelf" class="create-shelf"><a href="{{url_for('shelf.create_shelf')}}">{{_('Create a Shelf')}}</a></li>
-                <li id="nav_about" {% if page == 'stat' %}class="active"{% endif %}><a href="{{url_for('about.stats')}}"><span class="glyphicon glyphicon-info-sign"></span>{{_('About')}}</a></li>
-              {% endif %}
+                  <li id="nav_createshelf" class="create-shelf"><a href="{{url_for('shelf.create_shelf')}}">{{_('Create a Shelf')}}</a></li>
+                  {% if g.user.role_admin() %}
+                    <li id="nav_about" {% if page == 'stat' %}class="active"{% endif %}><a href="{{url_for('about.stats')}}"><span class="glyphicon glyphicon-info-sign"></span>{{_('About')}}</a></li>
+                    <li id="nav_about"><a href="{{url_for('web.statistics')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('Estadísticas')}}</a></li>
+                    <li id="nav_about"><a href="{{url_for('web.reports')}}"><span class="glyphicon glyphicon-info-sign"></span> {{_('Informes')}}</a></li>
+                {% endif %}
               {% endif %}
 
             </ul>
@@ -189,6 +193,50 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="bookViewModal" tabindex="-1" role="dialog" aria-labelledby="bookViewModalLabel">
+        <div class="modal-dialog" style="width:100%" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="bookViewModalLabel">{{_('Book Details')}}</h4>
+                </div>
+                <div class="modal-body" style="padding:0px;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="userHistoryModal" tabindex="-1" role="dialog" aria-labelledby="userHistoryModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="userHistoryModalLabel">{{_('Detalle usuario')}}</h4>
+                </div>
+                <div class="modal-body">...</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="bookHistoryModal" tabindex="-1" role="dialog" aria-labelledby="bookHistoryModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="bookHistoryModalLabel">{{_('Detalle documento')}}</h4>
+                </div>
+                <div class="modal-body">...</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {% block modal %}{% endblock %}
 
 
@@ -210,6 +258,8 @@
       <script src="{{ url_for('static', filename='js/libs/readmore.min.js') }}"></script>
       <script src="{{ url_for('static', filename='js/caliBlur.js') }}"></script>
     {% endif %}
+    <script src="{{ url_for('static', filename='custom/js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='custom/js/shortcut.js') }}"></script>
     <script type="text/javascript">
         $(function() {
             $("#form-upload").uploadprogress({

@@ -28,7 +28,7 @@ import datetime
 import mimetypes
 import re
 
-from babel.dates import format_date
+from babel.dates import format_date, format_datetime
 from flask import Blueprint, request, url_for
 from flask_babel import get_locale
 from flask_login import current_user
@@ -83,6 +83,17 @@ def formatdate_filter(val):
     except AttributeError as e:
         log.error('Babel error: %s, Current user locale: %s, Current User: %s', e, current_user.locale, current_user.nickname)
         return formatdate
+
+@jinjia.app_template_filter('formatdatetime')
+def formatdatetime_filter(val):
+    try:
+        conformed_timestamp = re.sub(r"[:]|([-](?!((\d{2}[:]\d{2})|(\d{4}))$))", '', val)
+        formatdatetime = datetime.datetime.strptime(conformed_timestamp[:15], "%Y%m%d %H%M%S")
+        return format_datetime(formatdatetime, format='medium', locale=get_locale())
+    except AttributeError as e:
+        log.error('Babel error: %s, Current user locale: %s, Current User: %s', e, current_user.locale, current_user.nickname)
+        return formatdatetime
+
 
 @jinjia.app_template_filter('formatdateinput')
 def format_date_input(val):

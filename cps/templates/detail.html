@@ -61,7 +61,11 @@
                 </button>
                     <ul class="dropdown-menu" aria-labelledby="read-in-browser">
                     {% for format in reader_list %}
-                      <li><a target="_blank" href="{{ url_for('web.read_book', book_id=entry.id, book_format=format) }}">{{format}}</a></li>
+                        {% if format|lower == 'pdf' %}
+                            <li><a data-href="{{ url_for('web.view_book', book_id=entry.id) }}" data-toggle="modal" data-target="#bookViewModal" data-remote="false" href="{{ url_for('web.read_book', book_id=entry.id, book_format=format) }}">{{format}}</a></li>
+                        {% else %}
+                            <li><a target="_blank" href="{{ url_for('web.read_book', book_id=entry.id, book_format=format) }}">{{format}}</a></li>
+                        {% endif %}
                     {%endfor%}
                     </ul>
               </div>
@@ -193,7 +197,7 @@
       {% endif %}
       {% if not g.user.is_anonymous %}
 
-        <div class="custom_columns">
+        {#<div class="custom_columns">
           <p>
           <form id="have_read_form" action="{{ url_for('web.toggle_read', book_id=entry.id)}}" method="POST">
             <label class="block-label">
@@ -202,7 +206,7 @@
             </label>
           </form>
           </p>
-        </div>
+        </div>#}
       {% endif %}
 
 

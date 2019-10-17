@@ -1,0 +1,20 @@
+
+#download {
+    display:none !important;
+}
+/*#print {
+    display:none !important;
+}*/
+#openFile {
+    display:none !important;
+}
+#viewBookmark {
+    display:none !important;
+}
+#secondaryToolbarToggle {
+    display:none !important;
+}
+
+.verticalToolbarSeparator {
+	display: none!important;
+}

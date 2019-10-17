@@ -1,0 +1,65 @@
+{% extends is_xhr|yesno("fragment.html", "layout.html") %}
+{% block body %}
+<div class="single">
+
+  <div class="row">
+    <div class="col-sm-3 col-lg-3 col-xs-5">
+
+        {{ title|safe }}
+    </div>
+
+    <div class="col-sm-9 col-lg-9">
+        <table id="libs" class="table">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Usuario</th>
+                <th>Fecha revisado</th>
+                <th>Hora revisado</th>
+            </tr>
+        </thead>
+          <tbody>
+          {% for item in entriess %}
+            <tr>
+                <th>{{loop.index}}</th>
+                <th>{{item.nickname}}</th>
+                {% set dates = item.date_concat.split(',') %}
+                {% set times = item.time_concat.split(',') %}
+                <td>
+                    {% for date in dates %}
+                        {% set item_datetime = "%s %s" %(date, times[loop.index0]) %}
+                        <p>{{ item_datetime|formatdate }}</p>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for date in dates %}
+                        <p>{{ times[loop.index0] }}</p>
+                    {% endfor %}
+                </td>
+            </tr>
+          {% endfor %}
+          {% for item in items %}
+              <tr>
+                <td>{{loop.index}}</td>
+                <th>{{item.nickname}}</th>
+                {% set datetimes = item.datetime_concat.split(',') %}
+                  <td>
+                  {% for datetime in datetimes %}
+                      {% set date, time = datetime.split(' ') %}
+                      <p>{{ datetime|formatdate }}</p>
+                  {% endfor %}
+                  </td>
+                  <td>
+                  {% for datetime in datetimes %}
+                      {% set date, time = datetime.split(' ') %}
+                      <p>{{ time }}</p>
+                  {% endfor %}
+                  </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
