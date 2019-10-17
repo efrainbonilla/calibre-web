@@ -4,6 +4,8 @@ Calibre-Web is a web app providing a clean interface for browsing, reading and d
 
 *This software is a fork of [library](https://github.com/mutschler/calibreserver) and licensed under the GPL v3 License.*
 
+*Es proyecto is un fork de [library](https://github.com/janeczku/calibre-web) para Biblioteca DPI del SENAPI	
+
 ![Main screen](https://github.com/janeczku/calibre-web/wiki/images/main_screen.png)
 
 ## Features
