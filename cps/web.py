@@ -607,7 +607,11 @@ def statistics():
     books = []
     for entry in bookscounter:
         book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(db.Books.id == entry.book_id).first()
-        books.append(book)
+        if book is None:
+            ub.session.query(ub.ViewBook).filter(ub.ViewBook.book_id == entry.book_id).delete()
+            ub.session.commit()
+        else:
+            books.append(book)
 
     return render_title_template('statistics.html', bookcounter=counter, authorcounter=authors,
                                  categorycounter=categorys, seriecounter=series,
