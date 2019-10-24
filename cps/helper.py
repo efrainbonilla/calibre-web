@@ -729,17 +729,17 @@ def get_typeahead(database, query, replace=('',''), tag_filter=true()):
 # read search results from calibre-database and return it (function is used for feed and simple search
 def get_search_results(term):
     db.session.connection().connection.connection.create_function("lower", 1, lcase)
-    q = list()
-    authorterms = re.split("[, ]+", term)
-    for authorterm in authorterms:
-        q.append(db.Books.authors.any(func.lower(db.Authors.name).ilike("%" + authorterm + "%")))
+    # q = list()
+    # authorterms = re.split("[, ]+", term)
+    # for authorterm in authorterms:
+    #    q.append(db.Books.authors.any(func.lower(db.Authors.name).ilike("%" + authorterm + "%")))
 
     db.Books.authors.any(func.lower(db.Authors.name).ilike("%" + term + "%"))
 
     return db.session.query(db.Books).filter(common_filters()).filter(
         or_(db.Books.tags.any(func.lower(db.Tags.name).ilike("%" + term + "%")),
             db.Books.series.any(func.lower(db.Series.name).ilike("%" + term + "%")),
-            db.Books.authors.any(and_(*q)),
+    #      db.Books.authors.any(and_(*q)),
             db.Books.publishers.any(func.lower(db.Publishers.name).ilike("%" + term + "%")),
             func.lower(db.Books.title).ilike("%" + term + "%")
             )).all()

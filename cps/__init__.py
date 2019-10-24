@@ -96,7 +96,7 @@ def create_app():
 
     babel.init_app(app)
     _BABEL_TRANSLATIONS.update(str(item) for item in babel.list_translations())
-    _BABEL_TRANSLATIONS.add('en')
+    _BABEL_TRANSLATIONS.add('es')
 
     if services.ldap:
         services.ldap.init_app(app, config)
@@ -119,13 +119,15 @@ def get_locale():
     preferred = set()
     if request.accept_languages:
         for x in request.accept_languages.values():
+            if x not in ['es-419', 'es', 'en']:
+                continue
             try:
                 preferred.add(str(LC.parse(x.replace('-', '_'))))
             except (UnknownLocaleError, ValueError) as e:
                 log.warning('Could not parse locale "%s": %s', x, e)
                 # preferred.append('en')
 
-    return negotiate_locale(preferred or ['en'], _BABEL_TRANSLATIONS)
+    return negotiate_locale(preferred or ['es'], _BABEL_TRANSLATIONS)
 
 
 @babel.timezoneselector

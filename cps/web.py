@@ -1199,15 +1199,15 @@ def search():
                     .filter(common_filters()).all()
         else:
             entries = get_search_results(term)
-            ids = list()
-            for element in entries:
-                ids.append(element.id)
-            searched_ids[current_user.id] = ids
 
-        if entries and len(str(term)) > 2:
-            book = []
-            for entry in entries:
-                book.append(str(entry.id))
+        ids = list()
+        book = []
+        for element in entries:
+            ids.append(element.id)
+            book.append(str(element.id))
+        searched_ids[current_user.id] = ids
+
+        if book and len(str(term)) > 2:
             search_book(term, ",".join(book))
 
         return render_title_template('search.html', searchterm=term, entries=entries, page="search")
