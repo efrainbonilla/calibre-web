@@ -764,7 +764,7 @@ def feed_authorindex():
     if not off:
         off = 0
     entries = db.session.query(db.Authors).join(db.books_authors_link).join(db.Books).filter(common_filters())\
-        .group_by('books_authors_link.author').order_by(db.Authors.sort).limit(config.config_books_per_page).offset(off)
+        .group_by(text('books_authors_link.author')).order_by(db.Authors.sort).limit(config.config_books_per_page).offset(off)
     pagination = Pagination((int(off) / (int(config.config_books_per_page)) + 1), config.config_books_per_page,
                             len(db.session.query(db.Authors).all()))
     xml = render_title_template('feed.xml', listelements=entries, folder='feed_author', pagination=pagination)
@@ -794,7 +794,7 @@ def feed_categoryindex():
     if not off:
         off = 0
     entries = db.session.query(db.Tags).join(db.books_tags_link).join(db.Books).filter(common_filters())\
-        .group_by('books_tags_link.tag').order_by(db.Tags.name).offset(off).limit(config.config_books_per_page)
+        .group_by(text('books_tags_link.tag')).order_by(db.Tags.name).offset(off).limit(config.config_books_per_page)
     pagination = Pagination((int(off) / (int(config.config_books_per_page)) + 1), config.config_books_per_page,
                             len(db.session.query(db.Tags).all()))
     xml = render_title_template('feed.xml', listelements=entries, folder='feed_category', pagination=pagination)
@@ -824,7 +824,7 @@ def feed_seriesindex():
     if not off:
         off = 0
     entries = db.session.query(db.Series).join(db.books_series_link).join(db.Books).filter(common_filters())\
-        .group_by('books_series_link.series').order_by(db.Series.sort).offset(off).all()
+        .group_by(text('books_series_link.series')).order_by(db.Series.sort).offset(off).all()
     pagination = Pagination((int(off) / (int(config.config_books_per_page)) + 1), config.config_books_per_page,
                             len(db.session.query(db.Series).all()))
     xml = render_title_template('feed.xml', listelements=entries, folder='feed_series', pagination=pagination)
@@ -1209,7 +1209,7 @@ def author_list():
     if current_user.show_author():
         entries = db.session.query(db.Authors, func.count('books_authors_link.book').label('count'))\
             .join(db.books_authors_link).join(db.Books).filter(common_filters())\
-            .group_by('books_authors_link.author').order_by(db.Authors.sort).all()
+            .group_by(text('books_authors_link.author')).order_by(db.Authors.sort).all()
         for entry in entries:
             entry.Authors.name = entry.Authors.name.replace('|', ',')
         return render_title_template('list.html', entries=entries, folder='author', title=_(u"Author list"))
@@ -1266,7 +1266,7 @@ def series_list():
     if current_user.show_series():
         entries = db.session.query(db.Series, func.count('books_series_link.book').label('count'))\
             .join(db.books_series_link).join(db.Books).filter(common_filters())\
-            .group_by('books_series_link.series').order_by(db.Series.sort).all()
+            .group_by(text('books_series_link.series')).order_by(db.Series.sort).all()
         return render_title_template('list.html', entries=entries, folder='series', title=_(u"Series list"))
     else:
         abort(404)
@@ -1313,7 +1313,7 @@ def language_overview():
                 languages[0].name = _(isoLanguages.get(part3=languages[0].lang_code).name)
         lang_counter = db.session.query(db.books_languages_link,
                                         func.count('books_languages_link.book').label('bookcount')).group_by(
-            'books_languages_link.lang_code').all()
+            text('books_languages_link.lang_code')).all()
         return render_title_template('languages.html', languages=languages, lang_counter=lang_counter,
                                      title=_(u"Available languages"))
     else:
@@ -1341,7 +1341,7 @@ def category_list():
     if current_user.show_category():
         entries = db.session.query(db.Tags, func.count('books_tags_link.book').label('count'))\
             .join(db.books_tags_link).join(db.Books).order_by(db.Tags.name).filter(common_filters())\
-            .group_by('books_tags_link.tag').all()
+            .group_by(text('books_tags_link.tag')).all()
         return render_title_template('list.html', entries=entries, folder='category', title=_(u"Category list"))
     else:
         abort(404)
@@ -1569,8 +1569,8 @@ def reports():
 
 
     dateFormatYears = []
-    for y in range(2017, int(datetime.datetime.today().strftime("%Y"))):
-        dateFormatYears.append({'key': datetime.datetime.today().strftime("%Y"), 'value': datetime.datetime.today().strftime("%Y")})
+    for y in range(2017, int(datetime.datetime.today().strftime("%Y")) + 1):
+        dateFormatYears.append({'key': y, 'value': y})
 
     dateFormatYearsKeys = []
     for x in dateFormatYears:
@@ -1771,6 +1771,11 @@ def statistics():
     for entry in bookscounter:
         book = db.session.query(db.Books.id.label('id'), db.Books.title.label('title')).filter(db.Books.id == entry.book_id).first()
         books.append(book)
+        if book is None:
+            ub.session.query(ub.ViewBook).filter(ub.ViewBook.book_id == entry.book_id).delete()
+            ub.session.commit()
+        else:
+            books.append(book)
 
     return render_title_template('statistics.html', bookcounter=counter, authorcounter=authors,
                                  categorycounter=categorys, seriecounter=series,

@@ -105,9 +105,11 @@ $(function() {
     });
 
     if (checkedFilterDateDefault == false) {
-         var chk0 = $(this.formReports.optionDate[0]);
-         chk0.attr('checked', true);
-         chekedDate(chk0.val());
+        if (this.formReports){
+            var chk0 = $(this.formReports.optionDate[0]);
+            chk0.attr('checked', true);
+            chekedDate(chk0.val());
+        }
     }
 
 
@@ -128,7 +130,6 @@ $(function() {
                 return false;
                 break;
         }
-        console.log(user, value);
     }
 
 
@@ -143,9 +144,11 @@ $(function() {
     });
 
     if (checkedFilterUserDefault == false) {
-         var chk0 = $(this.formReports.optionUser[1]);
-         chk0.attr('checked', true);
-         chekedUser(chk0.val());
+        if (this.formReports) {
+            var chk0 = $(this.formReports.optionUser[1]);
+            chk0.attr('checked', true);
+            chekedUser(chk0.val());
+        }
     }
 
 });

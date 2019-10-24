@@ -42,6 +42,7 @@
     position: absolute;
     margin-left: 58px;
     margin-top: 30px;
+    display: block;
 }
 
 body > .container-fluid:before {
@@ -86,4 +87,8 @@ body > .container-fluid:before {
   .navbar-form {
     margin-left: 0px;
   }
+}
+
+#query {
+    min-width: 200px;
 }
