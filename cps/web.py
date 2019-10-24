@@ -50,7 +50,7 @@ from .gdriveutils import getFileFromEbooksFolder, do_gdrive_download
 from .helper import common_filters, get_search_results, fill_indexpage, speaking_language, check_valid_domain, \
         order_authors, get_typeahead, render_task_status, json_serial, get_cc_columns, \
         get_book_cover, get_download_link, send_mail, generate_random_password, send_registration_mail, \
-        check_send_to_kindle, check_read_formats, lcase, tags_filters
+        check_send_to_kindle, check_read_formats, lcase, tags_filters, gd
 from .pagination import Pagination
 from .redirect import redirect_back
 
@@ -1408,6 +1408,15 @@ def render_read_books(page, are_read, as_xml=False, order=None):
 @login_required_if_no_ano
 def get_cover(book_id):
     return get_book_cover(book_id)
+
+
+@web.route("/cover/<path:cover_path>")
+@login_required_if_no_ano
+def get_cover_path(cover_path):
+    if config.config_use_google_drive:
+        return redirect(gd.get_cover_via_gdrive(cover_path))
+    else:
+        return send_from_directory(os.path.join(config.config_calibre_dir, cover_path), "cover.jpg")
 
 
 @web.route("/show/<book_id>/<book_format>")

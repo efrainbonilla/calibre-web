@@ -8,7 +8,7 @@
     <div class="col-sm-3 col-lg-2 col-xs-6 book" id="books_rand">
       <div class="cover">
           <a href="{{ url_for('web.show_book', book_id=entry.id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">
-              <img src="{{ url_for('web.get_cover', book_id=entry.id) }}" alt="{{ entry.title }}" />
+              <img src="{{ url_for('web.get_cover_path', cover_path=entry.path.replace('\\','/')) }}" alt="{{ entry.title }}" />
           </a>
       </div>
       <div class="meta">
@@ -71,7 +71,7 @@
     <div class="col-sm-3 col-lg-2 col-xs-6 book" id="books">
       <div class="cover">
           <a href="{{ url_for('web.show_book', book_id=entry.id) }}" data-toggle="modal" data-target="#bookDetailsModal" data-remote="false">
-              <img src="{{ url_for('web.get_cover', book_id=entry.id) }}" alt="{{ entry.title }}"/>
+              <img src="{{ url_for('web.get_cover_path', cover_path=entry.path.replace('\\','/')) }}" alt="{{ entry.title }}"/>
           </a>
       </div>
       <div class="meta">

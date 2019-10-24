@@ -16,7 +16,7 @@
   {% endfor %}
   ],
   "series": null,
-  "cover": "{{url_for('opds.feed_get_cover', book_id=entry.id)}}",
+  "cover": "{{url_for('opds.feed_get_cover_path', cover_path=entry.path.replace('\\','/'))}}",
   "languages": [
   {% for lang in entry.languages %}
     "{{lang.lang_code}}"{% if not loop.last %},{% endif %}
@@ -34,7 +34,7 @@
   "author_sort": "{{entry.author_sort}}",
   "uuid": "{{entry.uuid}}",
   "timestamp": "{{entry.timestamp}}",
-  "thumbnail": "{{url_for('opds.feed_get_cover', book_id=entry.id)}}",
+  "thumbnail": "{{url_for('opds.feed_get_cover_path', cover_path=entry.path.replace('\\','/'))}}",
   "main_format": {
     "{{entry.data[0].format|lower}}": "{{ url_for('opds.opds_download_link', book_id=entry.id, book_format=entry.data[0].format|lower)}}"
   },
